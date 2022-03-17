@@ -34,6 +34,10 @@ test_1.c
 #define OUT_PORT 0
 #define PORT_PIN 0
 
+#define RGB_Red 1
+#define RGB_Green 2
+#define RGB_Blue 0
+
 int main(void)
 {	
 	int TA12StateBefore = 0;
@@ -44,25 +48,46 @@ int main(void)
 	int RightStateBefore = 0;
 	int UpStateBefore = 0;
 	int DownStateBefore = 0;
-	int CenterStateBefore = 0;
+	int CenterStateBeforeR = 0;
+	int CenterStateBeforeG = 0;
+	int CenterStateBeforeB = 0;
 	
 	GLCD_Init();
+	Switch_Init();
+	LED_Init();
 	
 	GPIOSetDir(OUT_PORT, PORT_PIN, GPIO_OUTPUT);
 	GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);
 	
 	while(1)
 	{	
+		
+		GLCD_Simulation();
 		//prep 1.6
 		LED_Out(Get_SwitchPos());
-		
+		/*
 		//prep 1.7
-		//Red
-		RGB_FlipFlop(1,Get_TA12Stat(),TA12StateBefore);
+		TA12StateBefore = RGB_FlipFlop(RGB_Red,Get_TA12Stat(),TA12StateBefore);
+		TA10StateBefore = RGB_FlipFlop(RGB_Green,Get_TA10Stat(),TA10StateBefore);
+		TA11StateBefore = RGB_FlipFlop(RGB_Blue,Get_TA11Stat(),TA11StateBefore);
 		
+		//prep 1.8
+		LeftStateBefore = LED_FlipFlop(6,Get_LeftStat(),LeftStateBefore);
+		RightStateBefore = LED_FlipFlop(2,Get_RightStat(),RightStateBefore);
+		UpStateBefore = LED_FlipFlop(0,Get_RightStat(),UpStateBefore);
+		DownStateBefore = LED_FlipFlop(4,Get_RightStat(),DownStateBefore);
+		
+		CenterStateBeforeR = RGB_FlipFlop(RGB_Red,Get_CenterStat(),CenterStateBeforeR);
+		CenterStateBeforeG = RGB_FlipFlop(RGB_Green,Get_CenterStat(),CenterStateBeforeG);
+		CenterStateBeforeB = RGB_FlipFlop(RGB_Blue,Get_CenterStat(),CenterStateBeforeB);
+		
+		//prep 1.9
+		rolchar(0x81, 0);
+		
+		//prep 1.10
 		
 
-		
+		//hack your_mom
 		//Wurschdwaschscher
 		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_HIGH);
 		GLCD_Simulation();
@@ -70,6 +95,8 @@ int main(void)
 		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);	
 		GLCD_Simulation();
 		delayXms(5);
+		
+		*/
 	}
 	
 }	// end main()

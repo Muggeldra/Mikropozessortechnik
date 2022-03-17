@@ -27,22 +27,22 @@ void LED_On(unsigned int num){
 			GPIOSetValue(0,0,1);
 		break;
 		case 1:
-			GPIOSetValue(0,22,1);
-		break;
-		case 2:
-			GPIOSetValue(2,7,1);
-		break;
-		case 3:
-			GPIOSetValue(2,12,1);
-		break;
-		case 4:
 			GPIOSetValue(0,2,1);
 		break;
-		case 5:
+		case 2:
+			GPIOSetValue(0,22,1);
+		break;
+		case 3:
 			GPIOSetValue(2,6,1);
 		break;
-		case 6:
+		case 4:
+			GPIOSetValue(2,7,1);
+		break;
+		case 5:
 			GPIOSetValue(2,8,1);
+		break;
+		case 6:
+			GPIOSetValue(2,12,1);
 		break;
 		case 7:
 			GPIOSetValue(2,13,1);
@@ -200,22 +200,47 @@ void RGB_Out(unsigned char value){
 	else{RGB_Off(0);}
 }
 
-void RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore){
+unsigned int RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore){
 	if(button && buttonBefore == 0){
 			RGB_Toggle(led);
-			buttonBefore = 1;
+			return 1;
 		}
 		else if(!button && buttonBefore == 1){
-			buttonBefore = 0;
+			return 0;
+		}
+		else{
+			return buttonBefore;
 		}
 }
 
-void LED_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore){
+unsigned int LED_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore){
 	if(button && buttonBefore == 0){
 			LED_Toggle(led);
-			buttonBefore = 1;
+			return 1;
 		}
 		else if(!button && buttonBefore == 1){
-			buttonBefore = 0;
+			return 0;
 		}
+		else{
+			return buttonBefore;
+		}
+}
+
+void rolchar(uint8_t value, uint8_t dir){
+	if(dir == 0){
+		if(value & (1 << 7)){
+			LED_Out((value << 1)+1);
+		}
+		else{
+			LED_Out(value << 1);
+		}
+	}
+	if(dir == 0){
+		if(value & 1){
+			LED_Out((value >> 1)+128);
+		}
+		else{
+			LED_Out(value >> 1);
+		}
+	}
 }

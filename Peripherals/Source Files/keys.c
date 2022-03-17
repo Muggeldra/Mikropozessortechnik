@@ -20,12 +20,12 @@ void Switch_Init(void){
 unsigned char Get_SwitchPos(void){
 	unsigned char value = 0;
 	if(GPIOGetValue(1,25)){value += 128;}
-	if(GPIOGetValue(1,21)){value += 64;}
+	if(GPIOGetValue(1,24)){value += 64;}
 	if(GPIOGetValue(1,23)){value += 32;}
-	if(GPIOGetValue(1,19)){value += 16;}
-	if(GPIOGetValue(1,24)){value += 8;}
+	if(GPIOGetValue(1,22)){value += 16;}
+	if(GPIOGetValue(1,21)){value += 8;}
 	if(GPIOGetValue(1,20)){value += 4;}
-	if(GPIOGetValue(1,22)){value += 2;}
+	if(GPIOGetValue(1,19)){value += 2;}
 	if(GPIOGetValue(1,18)){value += 1;}
 	return value;
 }

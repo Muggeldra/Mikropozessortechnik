@@ -11,7 +11,8 @@ void RGB_On(unsigned int num);
 void RGB_Off(unsigned int num);
 void RGB_Out(unsigned char num);
 void RGB_Toggle(unsigned int num);
-void LED_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
-void RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
+unsigned int LED_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
+unsigned int RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
+void rolchar(uint8_t value, uint8_t dir);
 
 #endif
