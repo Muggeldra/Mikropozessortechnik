@@ -58,22 +58,22 @@ void LED_Off(unsigned int num){
 			GPIOSetValue(0,0,0);
 		break;
 		case 1:
-			GPIOSetValue(0,22,0);
-		break;
-		case 2:
-			GPIOSetValue(2,7,0);
-		break;
-		case 3:
-			GPIOSetValue(2,12,0);
-		break;
-		case 4:
 			GPIOSetValue(0,2,0);
 		break;
-		case 5:
+		case 2:
+			GPIOSetValue(0,22,0);
+		break;
+		case 3:
 			GPIOSetValue(2,6,0);
 		break;
-		case 6:
+		case 4:
+			GPIOSetValue(2,7,0);
+		break;
+		case 5:
 			GPIOSetValue(2,8,0);
+		break;
+		case 6:
+			GPIOSetValue(2,12,0);
 		break;
 		case 7:
 			GPIOSetValue(2,13,0);
@@ -89,22 +89,22 @@ void LED_Toggle(unsigned int num){
 			GPIOToggle(0,0);
 		break;
 		case 1:
-			GPIOToggle(0,22);
-		break;
-		case 2:
-			GPIOToggle(2,7);
-		break;
-		case 3:
-			GPIOToggle(2,12);
-		break;
-		case 4:
 			GPIOToggle(0,2);
 		break;
-		case 5:
+		case 2:
+			GPIOToggle(0,22);
+		break;
+		case 3:
 			GPIOToggle(2,6);
 		break;
-		case 6:
+		case 4:
+			GPIOToggle(2,7);
+		break;
+		case 5:
 			GPIOToggle(2,8);
+		break;
+		case 6:
+			GPIOToggle(2,12);
 		break;
 		case 7:
 			GPIOToggle(2,13);

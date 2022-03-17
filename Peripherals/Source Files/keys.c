@@ -36,7 +36,9 @@ void button_Init(void){
 	GPIOSetDir(1,27,0);
 	GPIOSetDir(2,11,0);
 	
-	//pincon
+	LPC_PINCON->PINMODE3 &= ~(3 << 20);LPC_PINCON->PINMODE3 |= (2 << 20);//P1.26  
+	LPC_PINCON->PINMODE3 &= ~(3 << 22);LPC_PINCON->PINMODE3 |= (2 << 22);//P1.27  
+	LPC_PINCON->PINMODE4 &= ~(3 << 22);LPC_PINCON->PINMODE4 |= (2 << 22);//P2.11 
 }
 
 unsigned int Get_TA10Stat(void){
@@ -62,7 +64,11 @@ void Joystick_Init(void){
 	GPIOSetDir(0,21,0);
 	GPIOSetDir(0,25,0);
 	
-	//pincon
+	LPC_PINCON->PINMODE0 &= ~(3 <<   6);LPC_PINCON->PINMODE0 |= (2 << 6); //P0.3  
+	LPC_PINCON->PINMODE1 &= ~(3 << 10);LPC_PINCON->PINMODE1 |= (2 << 10);//P0.21 
+	LPC_PINCON->PINMODE1 &= ~(3 << 18);LPC_PINCON->PINMODE1 |= (2 << 18);//P0.25  
+	LPC_PINCON->PINMODE1 &= ~(3 << 22);LPC_PINCON->PINMODE1 |= (2 << 22);//P0.27 
+	LPC_PINCON->PINMODE1 &= ~(3 << 24);LPC_PINCON->PINMODE1 |= (2 << 24);//P0.28
 }
 
 unsigned int Get_LeftStat(void){
