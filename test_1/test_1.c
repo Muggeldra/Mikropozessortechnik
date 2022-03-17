@@ -63,7 +63,7 @@ int main(void)
 		
 
 		
-		
+		//Wurschdwaschscher
 		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_HIGH);
 		GLCD_Simulation();
 		delayXms(5);
