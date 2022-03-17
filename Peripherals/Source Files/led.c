@@ -201,11 +201,11 @@ void RGB_Out(unsigned char value){
 }
 
 unsigned int RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore){
-	if(button && buttonBefore == 0){
+	if(button == 1 && buttonBefore == 0){
 			RGB_Toggle(led);
 			return 1;
 		}
-		else if(!button && buttonBefore == 1){
+		else if(button != 1 && buttonBefore == 1){
 			return 0;
 		}
 		else{
@@ -226,21 +226,23 @@ unsigned int LED_FlipFlop(unsigned int led,unsigned int button, unsigned int but
 		}
 }
 
-void rolchar(uint8_t value, uint8_t dir){
+uint8_t rolchar(uint8_t value, uint8_t dir){
 	if(dir == 0){
 		if(value & (1 << 7)){
-			LED_Out((value << 1)+1);
+			value = ((value << 1)+1);
 		}
 		else{
-			LED_Out(value << 1);
+			value = (value << 1);
 		}
 	}
-	if(dir == 0){
+	else if(dir == 1){
 		if(value & 1){
-			LED_Out((value >> 1)+128);
+			value = ((value >> 1)+128);
 		}
 		else{
-			LED_Out(value >> 1);
+			value = (value >> 1);
 		}
 	}
+	LED_Out(value);
+	return value;
 }

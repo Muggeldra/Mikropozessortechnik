@@ -166,21 +166,21 @@ void GPIOToggle(uint8_t portNum, uint8_t bitPosi)
 			/* Port-Pin auf 1 setzen  		*/
 			switch ( portNum ) 
 			{ case PORT0: 
-				LPC_GPIO0->FIOSET ^= (1<<bitPosi); 
+				LPC_GPIO0->FIOPIN ^= (1<<bitPosi); 
 				break; 
 				case PORT1: 
-				LPC_GPIO1->FIOSET ^= (1<<bitPosi); 
+				LPC_GPIO1->FIOPIN ^= (1<<bitPosi); 
 				break; 
 
 				case PORT2: 
-					LPC_GPIO2->FIOSET ^= (1<<bitPosi); 
+					LPC_GPIO2->FIOPIN ^= (1<<bitPosi); 
 				break; 
 
 				case PORT3: 
-				LPC_GPIO3->FIOSET ^= (1<<bitPosi); 
+				LPC_GPIO3->FIOPIN ^= (1<<bitPosi); 
 				break; 
 				case PORT4: 
-					LPC_GPIO4->FIOSET ^= (1<<bitPosi); 
+					LPC_GPIO4->FIOPIN ^= (1<<bitPosi); 
 				break; 
 
 				default: break; 

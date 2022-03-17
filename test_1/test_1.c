@@ -40,6 +40,10 @@ test_1.c
 
 int main(void)
 {	
+	uint8_t walkingLight = 129;
+	unsigned char previousSwitches = 0;
+	int walkingLightDelay = 25;
+	
 	int TA12StateBefore = 0;
 	int TA11StateBefore = 0;
 	int TA10StateBefore = 0;
@@ -54,7 +58,10 @@ int main(void)
 	
 	GLCD_Init();
 	Switch_Init();
+	button_Init();
+	Joystick_Init();
 	LED_Init();
+	RGB_Init();
 	
 	GPIOSetDir(OUT_PORT, PORT_PIN, GPIO_OUTPUT);
 	GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);
@@ -64,9 +71,10 @@ int main(void)
 		
 		GLCD_Simulation();
 		//prep 1.6
-		LED_Out(Get_SwitchPos());
-		/*
+		//LED_Out(Get_SwitchPos());
+		
 		//prep 1.7
+		/*
 		TA12StateBefore = RGB_FlipFlop(RGB_Red,Get_TA12Stat(),TA12StateBefore);
 		TA10StateBefore = RGB_FlipFlop(RGB_Green,Get_TA10Stat(),TA10StateBefore);
 		TA11StateBefore = RGB_FlipFlop(RGB_Blue,Get_TA11Stat(),TA11StateBefore);
@@ -74,19 +82,30 @@ int main(void)
 		//prep 1.8
 		LeftStateBefore = LED_FlipFlop(6,Get_LeftStat(),LeftStateBefore);
 		RightStateBefore = LED_FlipFlop(2,Get_RightStat(),RightStateBefore);
-		UpStateBefore = LED_FlipFlop(0,Get_RightStat(),UpStateBefore);
-		DownStateBefore = LED_FlipFlop(4,Get_RightStat(),DownStateBefore);
+		UpStateBefore = LED_FlipFlop(0,Get_UpStat(),UpStateBefore);
+		DownStateBefore = LED_FlipFlop(4,Get_DownStat(),DownStateBefore);
 		
 		CenterStateBeforeR = RGB_FlipFlop(RGB_Red,Get_CenterStat(),CenterStateBeforeR);
 		CenterStateBeforeG = RGB_FlipFlop(RGB_Green,Get_CenterStat(),CenterStateBeforeG);
 		CenterStateBeforeB = RGB_FlipFlop(RGB_Blue,Get_CenterStat(),CenterStateBeforeB);
-		
+		*/
 		//prep 1.9
-		rolchar(0x81, 0);
+		//walkingLight = rolchar(walkingLight, 0);
 		
 		//prep 1.10
+		//value
+		if(previousSwitches != Get_SwitchPos()){
+			previousSwitches = Get_SwitchPos();
+			walkingLight = Get_SwitchPos();
+		}
+		//delay
+		delayXms(walkingLightDelay);
+		walkingLight = rolchar(walkingLight, 0);
 		
-
+		
+		
+		
+		/*
 		//hack your_mom
 		//Wurschdwaschscher
 		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_HIGH);
@@ -95,7 +114,6 @@ int main(void)
 		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);	
 		GLCD_Simulation();
 		delayXms(5);
-		
 		*/
 	}
 	
