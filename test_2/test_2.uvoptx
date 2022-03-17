@@ -8,9 +8,9 @@
   <Extensions>
     <cExt>*.c</cExt>
     <aExt>*.s*; *.src; *.a*</aExt>
-    <oExt>*.obj</oExt>
+    <oExt>*.obj; *.o</oExt>
     <lExt>*.lib</lExt>
-    <tExt>*.txt; *.h; *.inc</tExt>
+    <tExt>*.txt; *.h; *.inc; *.md</tExt>
     <pExt>*.plm</pExt>
     <CppX>*.cpp</CppX>
     <nMigrate>0</nMigrate>
@@ -139,13 +139,160 @@
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
+      <ToolboxButtons>
+        <Wi>
+          <IntNumber>0</IntNumber>
+          <FirstString>S7_0/1</FirstString>
+          <SecondString>S7_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>1</IntNumber>
+          <FirstString>S6_0/1</FirstString>
+          <SecondString>S6_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>2</IntNumber>
+          <FirstString>S5_0/1</FirstString>
+          <SecondString>S5_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>3</IntNumber>
+          <FirstString>S4_0/1</FirstString>
+          <SecondString>S4_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>4</IntNumber>
+          <FirstString>S3_0/1</FirstString>
+          <SecondString>S3_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>5</IntNumber>
+          <FirstString>S2_0/1</FirstString>
+          <SecondString>S2_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>6</IntNumber>
+          <FirstString>S1_0/1</FirstString>
+          <SecondString>S1_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>7</IntNumber>
+          <FirstString>S0_0/1</FirstString>
+          <SecondString>S0_0_1 ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>8</IntNumber>
+          <FirstString>JST_Left</FirstString>
+          <SecondString>JST_Left ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>9</IntNumber>
+          <FirstString>JST_Right</FirstString>
+          <SecondString>JST_Right ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>10</IntNumber>
+          <FirstString>JST_Up</FirstString>
+          <SecondString>JST_Up ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>11</IntNumber>
+          <FirstString>JST_Down</FirstString>
+          <SecondString>JST_Down ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>12</IntNumber>
+          <FirstString>JST_Center</FirstString>
+          <SecondString>JST_Center ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>13</IntNumber>
+          <FirstString>JST_Release</FirstString>
+          <SecondString>JST_Release ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>14</IntNumber>
+          <FirstString>TA10_Push_Release</FirstString>
+          <SecondString>TA10_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>15</IntNumber>
+          <FirstString>TA11_Push_Release</FirstString>
+          <SecondString>TA11_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>16</IntNumber>
+          <FirstString>TA12_Push_Release</FirstString>
+          <SecondString>TA12_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>17</IntNumber>
+          <FirstString>M_TA_1_Push_Rel</FirstString>
+          <SecondString>M_TA_1_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>18</IntNumber>
+          <FirstString>M_TA_2_Push_Rel</FirstString>
+          <SecondString>M_TA_2_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>19</IntNumber>
+          <FirstString>M_TA_3_Push_Rel</FirstString>
+          <SecondString>M_TA_3_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>20</IntNumber>
+          <FirstString>M_TA_4_Push_Rel</FirstString>
+          <SecondString>M_TA_4_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>21</IntNumber>
+          <FirstString>M_TA_5_Push_Rel</FirstString>
+          <SecondString>M_TA_5_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>22</IntNumber>
+          <FirstString>M_TA_6_Push_Rel</FirstString>
+          <SecondString>M_TA_6_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>23</IntNumber>
+          <FirstString>M_TA_7_Push_Rel</FirstString>
+          <SecondString>M_TA_7_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>24</IntNumber>
+          <FirstString>M_TA_8_Push_Rel</FirstString>
+          <SecondString>M_TA_8_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>25</IntNumber>
+          <FirstString>M_TA_9_Push_Rel</FirstString>
+          <SecondString>M_TA_9_P_R ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>26</IntNumber>
+          <FirstString>Encoder_A</FirstString>
+          <SecondString>Enc_A ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>27</IntNumber>
+          <FirstString>Encoder_B</FirstString>
+          <SecondString>Enc_B ()</SecondString>
+        </Wi>
+        <Wi>
+          <IntNumber>28</IntNumber>
+          <FirstString>Encoder_Push_Rel</FirstString>
+          <SecondString>Enc_P_R ()</SecondString>
+        </Wi>
+      </ToolboxButtons>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>0</aLwin>
+        <aLwin>1</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>
@@ -153,7 +300,7 @@
         <viewmode>1</viewmode>
         <vrSel>0</vrSel>
         <aSym>0</aSym>
-        <aTbox>0</aTbox>
+        <aTbox>1</aTbox>
         <AscS1>0</AscS1>
         <AscS2>0</AscS2>
         <AscS3>0</AscS3>
@@ -400,7 +547,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>3</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>.\test_2.c</PathWithFileName>
@@ -417,6 +564,42 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\Peripherals\Source Files\GLCD_Simulation.c</PathWithFileName>
       <FilenameWithoutPath>GLCD_Simulation.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>5</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Peripherals\Source Files\keys.c</PathWithFileName>
+      <FilenameWithoutPath>keys.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>6</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Peripherals\Libraries\lcd.h</PathWithFileName>
+      <FilenameWithoutPath>lcd.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>7</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Peripherals\Source Files\lcd.c</PathWithFileName>
+      <FilenameWithoutPath>lcd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
