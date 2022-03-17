@@ -77,13 +77,41 @@ int main(void){
 //================================================================================
 #if (T2_2 == 1)
 
-int main(void)
-{	
+#include "GLCD.h"
+#include "gpio.h"
+#include "keys.h"
+#include "lcd.h"
 
-	while(1)
-	{
-		
-	} // end while(1)
+int main(void){	
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Blue);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.2 switches");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+	
+	// write data fields
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(4, 0, FONT_16x24,(unsigned char*)"bin:");
+	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"hex:");
+	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"dez:");
+	
+	// Initialize switches
+	Switch_Init();
+	GLCD_Simulation();
+
+
+	while(1){	
+		GLCD_Simulation();
+		GLCD_DisplayString(4, 4, FONT_16x24, (unsigned char*)lcd_bin(Get_SwitchPos()));
+		GLCD_DisplayString(5, 4, FONT_16x24, (unsigned char*)lcd_hex(Get_SwitchPos()));
+		GLCD_DisplayString(6, 4, FONT_16x24, (unsigned char*)lcd_dez(Get_SwitchPos()));
+		GLCD_Bargraph(14, 215, 192, 20, (int)4 * Get_SwitchPos());
+	}
+	
 }	// end main()
 
 #endif
@@ -95,13 +123,42 @@ int main(void)
 //================================================================================
 #if (T2_3 == 1)
 
-int main(void)
-{	
+#include "GLCD.h"
+#include "gpio.h"
+#include "keys.h"
+#include "lcd.h"
 
-	while(1)
-	{
-		
-	} // end while(1)
+int main(void){	
+	int value = 0;
+	
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Yellow);
+	GLCD_SetTextColor(Blue);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.1 switches");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+	
+	// set colors
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	
+	// Initialize switches
+	Switch_Init();
+	GLCD_Simulation();
+
+	
+	while(1){	
+		GLCD_Simulation();
+		value = (Get_SwitchPos() << 4)|0xF;
+		GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"Value");
+		GLCD_DisplayString(4, 7, FONT_16x24, (unsigned char*)lcd_dez(value));
+		GLCD_DisplayString(4, 14, FONT_16x24, (unsigned char*)AD_volt(value));
+		GLCD_DisplayString(5, 1, FONT_16x24, (unsigned char*)"Temp.");
+		GLCD_DisplayString(5, 13, FONT_16x24, (unsigned char*)TempConv(value));
+	}
+	
 }	// end main()
 
 #endif

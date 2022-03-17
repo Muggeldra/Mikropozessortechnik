@@ -43,3 +43,34 @@ char *lcd_dez (uint16_t value){
 	// sprintf (text_string,"%5u",value); //alternative use sprintf
 	return (text_string);
 }
+
+char *AD_volt(unsigned short val){
+	static char text_string[6];
+	unsigned char asc[] = "0123456789.V";
+	val = (val / 4095) * 330;
+	text_string[0] = asc[(val/100)%10];
+	text_string[1] = asc[10];
+	text_string[2] = asc[(val/10)%10];
+	text_string[3] = asc[(val/1)%10];
+	text_string[4] = asc[11];
+	text_string[5] = 0;
+	return (text_string);
+}
+
+char *TempConv(unsigned short val){
+	static char text_string[8];
+	unsigned char asc[] = "0123456789.°C";
+	val *= 1000;
+	val /= 4095;
+	val *= 33;
+	val /= 100;
+	text_string[0] = asc[(val/1000)%10];
+	text_string[1] = asc[(val/100)%10];
+	text_string[2] = asc[10];
+	text_string[3] = asc[(val/10)%10];
+	text_string[4] = asc[(val/1)%10];
+	text_string[5] = asc[11];
+	text_string[6] = asc[12];
+	text_string[7] = 0;
+	return (text_string);
+}
