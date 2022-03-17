@@ -6,14 +6,14 @@
 char *lcd_bin (uint8_t value){
 	static char text_string[9];
 	unsigned char asc[] = "0123456789ABCDEF";
-	text_string[0] = asc[(value >> 7)];
-	text_string[1] = asc[(value >> 6)];
-	text_string[2] = asc[(value >> 5)];
-	text_string[3] = asc[(value >> 4)];
-	text_string[4] = asc[(value >> 3)];
-	text_string[5] = asc[(value >> 2)];
-	text_string[6] = asc[(value >> 1)];
-	text_string[7] = asc[(value >> 0)];
+	text_string[0] = asc[(value >> 7)&1];
+	text_string[1] = asc[(value >> 6)&1];
+	text_string[2] = asc[(value >> 5)&1];
+	text_string[3] = asc[(value >> 4)&1];
+	text_string[4] = asc[(value >> 3)&1];
+	text_string[5] = asc[(value >> 2)&1];
+	text_string[6] = asc[(value >> 1)&1];
+	text_string[7] = asc[(value >> 0)&1];
 	text_string[8] = 0; //end of string
 	return (text_string);
 }

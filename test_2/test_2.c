@@ -54,7 +54,7 @@ int main(void){
 	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"hex:");
 	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"dez:");
 	
-	// TO-DO: Initialize switches
+	// Initialize switches
 	Switch_Init();
 	GLCD_Simulation();
 
