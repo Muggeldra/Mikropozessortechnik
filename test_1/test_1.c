@@ -42,8 +42,10 @@ int main(void)
 {	
 	uint8_t walkingLight = 129;
 	unsigned char previousSwitches = 0;
-	uint32_t walkingLightDelay = 2617;
+	uint32_t walkingLightDelay = 1308;
 	uint32_t walkingLightTimer = 0;
+	uint32_t joystickDelay = 261;
+	uint32_t joystickTimer = 0;
 	int walkingLightDirection = 0;
 	
 	int TA12StateBefore = 0;
@@ -65,8 +67,10 @@ int main(void)
 	LED_Init();
 	RGB_Init();
 	
-	GPIOSetDir(0,2,GPIO_OUTPUT);
-	GPIOSetValue(0,2,0);
+	GPIOSetDir(2,0,GPIO_OUTPUT);
+	GPIOSetValue(2,0,0);
+	GPIOSetDir(2,1,GPIO_OUTPUT);
+	GPIOSetValue(2,1,0);
 	
 	GPIOSetDir(OUT_PORT, PORT_PIN, GPIO_OUTPUT);
 	GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);
@@ -103,13 +107,7 @@ int main(void)
 			previousSwitches = Get_SwitchPos();
 			walkingLight = Get_SwitchPos();
 		}
-		//direction
-		if(Get_LeftStat()){
-			walkingLightDirection = 1;
-		}
-		else if(Get_RightStat()){
-			walkingLightDirection = 0;
-		}
+		
 		//delay
 		walkingLightTimer++;
 		if(walkingLightTimer >= walkingLightDelay){
@@ -117,25 +115,39 @@ int main(void)
 			walkingLight = rolchar(walkingLight, walkingLightDirection);
 			GPIOToggle(2,0);
 		}
-		//delay changer
-		if(Get_UpStat() && walkingLightDelay < 10000){
-			walkingLightDelay += 950;
-			RGB_Off(RGB_Green);
-			RGB_On(RGB_Blue);
+		//Joystick
+		joystickTimer++;
+		if(joystickTimer >= joystickDelay){
+			joystickTimer = 0;
+			GPIOToggle(2,1);
+			//direction
+			if(Get_LeftStat()){
+				walkingLightDirection = 1;
+			}
+			else if(Get_RightStat()){
+				walkingLightDirection = 0;
+			}
+			//delay changer
+			if(Get_UpStat() && walkingLightDelay < 5000){
+				walkingLightDelay += 475;
+				RGB_Off(RGB_Green);
+				RGB_On(RGB_Blue);
+			}
+			else if(Get_DownStat() && walkingLightDelay > 250){
+				walkingLightDelay -= 475;
+				RGB_Off(RGB_Red);
+				RGB_On(RGB_Blue);
+			}
+			if(walkingLightDelay >= 5000){
+				RGB_Off(RGB_Blue);
+				RGB_On(RGB_Red);
+			}
+			else if(walkingLightDelay <= 250){
+				RGB_Off(RGB_Blue);
+				RGB_On(RGB_Green);
+			}
 		}
-		else if(Get_DownStat() && walkingLightDelay > 500){
-			walkingLightDelay -= 950;
-			RGB_Off(RGB_Red);
-			RGB_On(RGB_Blue);
-		}
-		if(walkingLightDelay >= 10000){
-			RGB_Off(RGB_Blue);
-			RGB_On(RGB_Red);
-		}
-		else if(walkingLightDelay <= 500){
-			RGB_Off(RGB_Blue);
-			RGB_On(RGB_Green);
-		}
+
 	}
 	
 }	// end main()
