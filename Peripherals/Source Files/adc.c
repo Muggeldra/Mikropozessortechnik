@@ -17,21 +17,21 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	LPC_SC->PCLKSEL0 &=~ (3 << 24);
 	LPC_SC->PCLKSEL0 |=  (1 << 24);
 	LPC_ADC->ADCR &=~ (0xFF << 8);
-	LPC_ADC->ADCR |=  (0x63 << 8);
+	LPC_ADC->ADCR |=  (0x64 << 8);
 	LPC_ADC->ADCR |= (intEn << 16);
 	LPC_ADC->ADCR |= (1 << 21);
 	LPC_ADC->ADCR &=~(7 << 24);
 	
 	if((chsel>>3)&1){
 		/*initialize channel 3*/
-		LPC_PINCON->PINSEL1 &=~ (3 << 20);
-		LPC_PINCON->PINSEL1 |=  (1 << 20);
+		LPC_PINCON->PINSEL1  &=~(3 << 20);
+		LPC_PINCON->PINSEL1  |= (1 << 20);
 		LPC_PINCON->PINMODE1 &=~(3 << 20);
 		LPC_PINCON->PINMODE1 |= (2 << 20);
 	}
 	if((chsel>>4)&1){
 		/*initialize channel 4*/
-		LPC_PINCON->PINSEL3 |= (3 << 28);
+		LPC_PINCON->PINSEL3  |= (3 << 28);
 		LPC_PINCON->PINMODE3 &=~(3 << 28);
 		LPC_PINCON->PINMODE3 |= (2 << 28);
 	}
@@ -49,11 +49,11 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 
 void ADC_StartCnv(uint8_t chsel, uint8_t burst){
 	LPC_ADC->ADCR &=~ (0xFF);
-	LPC_ADC->ADCR |= chsel;
 	if(!burst){
 		LPC_ADC->ADCR &=~ (7 << 24);
 		LPC_ADC->ADCR |=  (1 << 24);
 	}
+	LPC_ADC->ADCR |= chsel;
 }
 
 void ADC_StopCnv(void){

@@ -48,7 +48,6 @@ int main(void)
 	GLCD_SetBackColor(White);
 	GLCD_SetTextColor(Black);
 	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"LM35 AD0.3");
-	GLCD_DisplayString(6,13, FONT_16x24,(unsigned char*)lcd_dez(0));
 	
 	// test from script
 	ADC_Init((1<<3),0); //initialize channel 3 without interrupt -
