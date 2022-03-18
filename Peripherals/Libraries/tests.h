@@ -38,8 +38,8 @@ description: control of compilation of test_n.c
 // test 2
 #define T2_1 0
 #define T2_2 0
-#define T2_3 1
-#define T2_4 0
+#define T2_3 0
+#define T2_4 1
 #define T2_6 0
 #define T2_7 0
 //********************************************************************************

@@ -64,7 +64,7 @@ void Joystick_Init(void){
 	GPIOSetDir(0,21,0);
 	GPIOSetDir(0,25,0);
 	
-	LPC_PINCON->PINMODE0 &= ~(3 <<   6);LPC_PINCON->PINMODE0 |= (2 << 6); //P0.3  
+	LPC_PINCON->PINMODE0 &= ~(3 <<  6);LPC_PINCON->PINMODE0 |= (2 <<  6);//P0.03  
 	LPC_PINCON->PINMODE1 &= ~(3 << 10);LPC_PINCON->PINMODE1 |= (2 << 10);//P0.21 
 	LPC_PINCON->PINMODE1 &= ~(3 << 18);LPC_PINCON->PINMODE1 |= (2 << 18);//P0.25  
 	LPC_PINCON->PINMODE1 &= ~(3 << 22);LPC_PINCON->PINMODE1 |= (2 << 22);//P0.27 
@@ -90,4 +90,52 @@ unsigned int Get_DownStat(void){
 unsigned int Get_CenterStat(void){
 	if(GPIOGetValue(0,3)) {return 1;}
 	else{return 0;}
+}
+
+//Matrix
+void Matrix_Init(void){
+	// rows as output
+	GPIOSetDir(2, 3, 1);
+	GPIOSetDir(2, 4, 1);
+	GPIOSetDir(2, 5, 1);
+	
+	// colums as input
+	GPIOSetDir(0, 4, 0);
+	GPIOSetDir(0, 5, 0);
+	GPIOSetDir(3,26, 0);
+	
+	// set pinmode for inputs
+	LPC_PINCON->PINMODE0 &= ~(3 <<  8);LPC_PINCON->PINMODE0 |= (2 <<  8);//P0.04 
+	LPC_PINCON->PINMODE0 &= ~(3 << 10);LPC_PINCON->PINMODE0 |= (2 << 10);//P0.05 
+	LPC_PINCON->PINMODE7 &= ~(3 << 20);LPC_PINCON->PINMODE7 |= (2 << 20);//P3.26 
+}
+
+unsigned char Get_Mkey(void){
+	unsigned char taste = 0x20;
+	GPIOSetValue(2, 3, PORT_PIN_HIGH);
+	GPIOSetValue(2, 4, PORT_PIN_LOW);
+	GPIOSetValue(2, 5, PORT_PIN_LOW);
+	if(GPIOGetValue(0, 4)){ taste = '1'; }
+	else if(GPIOGetValue(0, 5)){ taste = '2'; }
+	else if(GPIOGetValue(3, 26)) { taste = '3'; }
+	else {
+		GPIOSetValue(2, 3, PORT_PIN_LOW);
+		GPIOSetValue(2, 4, PORT_PIN_HIGH);
+		GPIOSetValue(2, 5, PORT_PIN_LOW);
+		if(GPIOGetValue(0, 4)){ taste = '4'; }
+		else if(GPIOGetValue(0, 5)){ taste = '5'; }
+		else if(GPIOGetValue(3, 26)) { taste = '6'; }
+		else {
+			GPIOSetValue(2, 3, PORT_PIN_LOW);
+			GPIOSetValue(2, 4, PORT_PIN_LOW);
+			GPIOSetValue(2, 5, PORT_PIN_HIGH);
+			if(GPIOGetValue(0, 4)){ taste = '7'; }
+			else if(GPIOGetValue(0, 5)){ taste = '8'; }
+			else if(GPIOGetValue(3, 26)) { taste = '9'; }
+		}
+	}
+	GPIOSetValue(2, 3, PORT_PIN_LOW);
+	GPIOSetValue(2, 4, PORT_PIN_LOW);
+	GPIOSetValue(2, 5, PORT_PIN_LOW);
+	return taste;
 }

@@ -136,8 +136,8 @@ int main(void){
 	GLCD_Clear(White);
 	GLCD_SetBackColor(Yellow);
 	GLCD_SetTextColor(Blue);
-	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
-	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.1 switches");
+	GLCD_DisplayString(0,1,FONT_16x24,(unsigned char*)"Lab microprocessor");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"Test2.3: volt/temp");
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
 	
 	// set colors
@@ -171,13 +171,42 @@ int main(void){
 //================================================================================
 #if (T2_4 == 1)
 
-int main(void)
-{	
+#include "GLCD.h"
+#include "gpio.h"
+#include "keys.h"
+#include "lcd.h"
 
-	while(1)
-	{
-		
-	} // end while(1)
+int main(void){	
+	unsigned char lastKey = 0x20;
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Blue);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test2.4: matrix");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+	
+	// set colors
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(6, 1, FONT_16x24, (unsigned char*)"Taste:");
+	
+	// Initialize matrix
+	Matrix_Init();
+	GLCD_Simulation();
+	GPIOSetValue(2, 3, PORT_PIN_LOW);
+	GPIOSetValue(2, 4, PORT_PIN_LOW);
+	GPIOSetValue(2, 5, PORT_PIN_LOW);
+
+	
+	while(1){	
+		GLCD_Simulation();
+		if(Get_Mkey() != 0x20){ lastKey = Get_Mkey(); }
+		else{
+			GLCD_DisplayChar(6, 10, FONT_16x24, lastKey);
+		}
+	}
 }	// end main()
 
 #endif
