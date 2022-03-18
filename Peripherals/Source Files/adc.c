@@ -22,22 +22,22 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	LPC_ADC->ADCR |= (1 << 21);
 	LPC_ADC->ADCR &=~(7 << 24);
 	
-	if ((chsel>>3)&1) {
+	if((chsel>>3)&1){
 		/*initialize channel 3*/
 		LPC_PINCON->PINSEL1 &=~ (3 << 20);
 		LPC_PINCON->PINSEL1 |=  (1 << 20);
 		LPC_PINCON->PINMODE1 &=~(3 << 20);
 		LPC_PINCON->PINMODE1 |= (2 << 20);
 	}
-	if ((chsel>>4)&1) {
+	if((chsel>>4)&1){
 		/*initialize channel 4*/
 		LPC_PINCON->PINSEL3 |= (3 << 28);
 		LPC_PINCON->PINMODE3 &=~(3 << 28);
 		LPC_PINCON->PINMODE3 |= (2 << 28);
 	}
-	if ((chsel>>5)&1) {
+	if((chsel>>5)&1){
 		/*initialize channel 5*/
-		LPC_PINCON->PINSEL3 |= (3 << 30);
+		LPC_PINCON->PINSEL3  |= (3 << 30);
 		LPC_PINCON->PINMODE3 &=~(3 << 30);
 		LPC_PINCON->PINMODE3 |= (2 << 30);
 	}
@@ -48,13 +48,32 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 }
 
 void ADC_StartCnv(uint8_t chsel, uint8_t burst){
+	LPC_ADC->ADCR &=~ (0xFF);
+	LPC_ADC->ADCR |= chsel;
 	if(!burst){
-		LPC_ADC->ADCR &=~ (0xFF);
-		LPC_ADC->ADCR |= chsel;		
-	}
-	else{
-		
+		LPC_ADC->ADCR &=~ (7 << 24);
+		LPC_ADC->ADCR |=  (1 << 24);
 	}
 }
 
-	
+void ADC_StopCnv(void){
+	LPC_ADC->ADCR &=~ 0xFF;
+}	
+
+uint32_t ADC_Stat(void){
+	return LPC_ADC->ADSTAT;
+}
+
+uint16_t ADC_GetValue(unsigned int channel){
+	switch(channel){
+		case 0: return ((LPC_ADC->ADDR0 >> 4)&(0xFFF));
+		case 1: return ((LPC_ADC->ADDR1 >> 4)&(0xFFF));
+		case 2: return ((LPC_ADC->ADDR2 >> 4)&(0xFFF));
+		case 3: return ((LPC_ADC->ADDR3 >> 4)&(0xFFF));
+		case 4: return ((LPC_ADC->ADDR4 >> 4)&(0xFFF));
+		case 5: return ((LPC_ADC->ADDR5 >> 4)&(0xFFF));
+		case 6: return ((LPC_ADC->ADDR6 >> 4)&(0xFFF));
+		case 7: return ((LPC_ADC->ADDR7 >> 4)&(0xFFF));
+		default: return 0;
+	}
+}
