@@ -42,7 +42,9 @@ int main(void)
 {	
 	uint8_t walkingLight = 129;
 	unsigned char previousSwitches = 0;
-	int walkingLightDelay = 25;
+	uint32_t walkingLightDelay = 2617;
+	uint32_t walkingLightTimer = 0;
+	int walkingLightDirection = 0;
 	
 	int TA12StateBefore = 0;
 	int TA11StateBefore = 0;
@@ -62,6 +64,9 @@ int main(void)
 	Joystick_Init();
 	LED_Init();
 	RGB_Init();
+	
+	GPIOSetDir(0,2,GPIO_OUTPUT);
+	GPIOSetValue(0,2,0);
 	
 	GPIOSetDir(OUT_PORT, PORT_PIN, GPIO_OUTPUT);
 	GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);
@@ -92,29 +97,45 @@ int main(void)
 		//prep 1.9
 		//walkingLight = rolchar(walkingLight, 0);
 		
-		//prep 1.10
+		//prep 1.10 and 1.11
 		//value
 		if(previousSwitches != Get_SwitchPos()){
 			previousSwitches = Get_SwitchPos();
 			walkingLight = Get_SwitchPos();
 		}
+		//direction
+		if(Get_LeftStat()){
+			walkingLightDirection = 1;
+		}
+		else if(Get_RightStat()){
+			walkingLightDirection = 0;
+		}
 		//delay
-		delayXms(walkingLightDelay);
-		walkingLight = rolchar(walkingLight, 0);
-		
-		
-		
-		
-		/*
-		//hack your_mom
-		//Wurschdwaschscher
-		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_HIGH);
-		GLCD_Simulation();
-		delayXms(5);
-		GPIOSetValue(OUT_PORT,PORT_PIN,PORT_PIN_LOW);	
-		GLCD_Simulation();
-		delayXms(5);
-		*/
+		walkingLightTimer++;
+		if(walkingLightTimer >= walkingLightDelay){
+			walkingLightTimer = 0;
+			walkingLight = rolchar(walkingLight, walkingLightDirection);
+			GPIOToggle(2,0);
+		}
+		//delay changer
+		if(Get_UpStat() && walkingLightDelay < 10000){
+			walkingLightDelay += 950;
+			RGB_Off(RGB_Green);
+			RGB_On(RGB_Blue);
+		}
+		else if(Get_DownStat() && walkingLightDelay > 500){
+			walkingLightDelay -= 950;
+			RGB_Off(RGB_Red);
+			RGB_On(RGB_Blue);
+		}
+		if(walkingLightDelay >= 10000){
+			RGB_Off(RGB_Blue);
+			RGB_On(RGB_Red);
+		}
+		else if(walkingLightDelay <= 500){
+			RGB_Off(RGB_Blue);
+			RGB_On(RGB_Green);
+		}
 	}
 	
 }	// end main()
