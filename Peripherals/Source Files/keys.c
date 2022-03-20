@@ -93,9 +93,36 @@ unsigned int Get_CenterStat(void){
 	else{return 0;}
 }
 
-//Joystick Interrupt
+//Joystick as interrupt
 void JoyStick_IRQ_Init(void){
+	LPC_PINCON->PINSEL0 &=~ (3<<6);
+	LPC_PINCON->PINSEL1 &=~ (3<<10);
+	LPC_PINCON->PINSEL1 &=~ (3<<18);
+	LPC_PINCON->PINSEL1 &=~ (3<<22);
+	LPC_PINCON->PINSEL1 &=~ (3<<24);
 	
+	LPC_PINCON->PINMODE0 &= ~(3 <<  6);LPC_PINCON->PINMODE0 |= (2 <<  6);//P0.03  
+	LPC_PINCON->PINMODE1 &= ~(3 << 10);LPC_PINCON->PINMODE1 |= (2 << 10);//P0.21 
+	LPC_PINCON->PINMODE1 &= ~(3 << 18);LPC_PINCON->PINMODE1 |= (2 << 18);//P0.25  
+	LPC_PINCON->PINMODE1 &= ~(3 << 22);LPC_PINCON->PINMODE1 |= (2 << 22);//P0.27 
+	LPC_PINCON->PINMODE1 &= ~(3 << 24);LPC_PINCON->PINMODE1 |= (2 << 24);//P0.28
+	
+	GPIOSetDir(0,27,0);
+	GPIOSetDir(0,28,0);
+	GPIOSetDir(0,3,0);
+	GPIOSetDir(0,21,0);
+	GPIOSetDir(0,25,0);
+	
+	LPC_GPIOINT->IO0IntEnR |= (1<<3);
+	LPC_GPIOINT->IO0IntEnR |= (1<<21);
+	LPC_GPIOINT->IO0IntEnR |= (1<<25);
+	LPC_GPIOINT->IO0IntEnR |= (1<<27);
+	LPC_GPIOINT->IO0IntEnR |= (1<<28);
+	
+	//LPC_GPIOINT->IO0IntStatR = 0;
+	NVIC_ClearPendingIRQ(EINT3_IRQn);
+	NVIC_SetPriority(EINT3_IRQn, prioJoystick);
+	NVIC_EnableIRQ(EINT3_IRQn);
 }
 
 //Matrix
