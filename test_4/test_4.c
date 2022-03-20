@@ -212,7 +212,7 @@ int main(void)
 	}
 } // end main()
 
-void Adc_IrqHandler(void){
+void ADC_IRQHandler(void){
 	int i;
 	for(i = 0; i < 8; i++){
 		if((ADC_Stat()>>i)&1){
@@ -229,14 +229,52 @@ void Adc_IrqHandler(void){
 //================================================================================
 #if (T41_5==1)
 
-int main(void)
-{	
+uint16_t adresult[8];
 
-	while(1)
-	{
-		
-	} // end while(1)
-}	// end main()
+int main(void)
+{
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Yellow);
+	GLCD_SetTextColor(Blue);
+	GLCD_DisplayString(0,1,FONT_16x24,(unsigned char*)"Lab microprocessor");
+	GLCD_DisplayString(1,3,FONT_16x24,(unsigned char*)"test4.1.1: ADC");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+
+	// write data fields
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(4, 0, FONT_16x24,(unsigned char*)"Pot1 AD0.4");
+	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"Pot2 AD0.5");
+	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"LM35 AD0.3");
+	
+	// test1 from script
+	ADC_Init((7<<3), 1);
+	ADC_StartCnv((7<<3), 1);
+	
+	// gpio pins for time measurements
+	GPIOSetDir(2, 4, 1);
+	GPIOSetDir(2, 5, 1);
+	
+	while(1){
+		GPIOToggle(2, 4);
+		GLCD_DisplayString(5, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[5]));
+		GLCD_DisplayString(4, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[4]));
+		GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)TempConv(adresult[3]));
+	}
+} // end main()
+
+void ADC_IRQHandler(void){
+	GPIOSetValue(2, 5, 1);
+	int i;
+	for(i = 0; i < 8; i++){
+		if((ADC_Stat()>>i)&1){
+			adresult[i] = ADC_GetValue(i);
+		}
+	}
+	GPIOSetValue(2, 5, 0);
+}
 
 #endif
 
@@ -263,12 +301,62 @@ int main(void)
 //================================================================================
 #if (T42_1==1)
 
+#include "dac.h"
+
+#define PERIOD 200
+
+static unsigned int ticks = 0;
+unsigned int lastStart, value;
+
+// systick handler
+void SysTick_Handler(void){
+	ticks++;
+}
+
+//main
 int main(void)
 {	
+	// initialize systick timer
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/1000);
+	
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Yellow);
+	GLCD_SetTextColor(Blue);
+	GLCD_DisplayString(0,1,FONT_16x24,(unsigned char*)"Lab microprocessor");
+	GLCD_DisplayString(1,3,FONT_16x24,(unsigned char*)"test4.2.1: DAC");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
 
-	while(1)
-	{
+	// write data fields
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(4, 0, FONT_16x24,(unsigned char*)"output:");
+	GLCD_DisplayString(4, 11, FONT_16x24,(unsigned char*)"triangle");
+	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"period:");
+	GLCD_DisplayString(5, 11, FONT_16x24,(unsigned char*)lcd_dez(PERIOD));
+	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"value:");
+
+	// initialize dac
+	DAC_Init();
+	
+	// set start variable
+	lastStart = ticks;
+	
+	while(1){
 		
+		if(ticks - lastStart <= (PERIOD / 2)){
+			value = 2 * (1023 / PERIOD) * (ticks - lastStart);
+		}
+		else if(ticks - lastStart <= PERIOD){
+			value = 2046 - (2 * (1023 / PERIOD) * (ticks - lastStart));
+		}
+		else{
+			lastStart = ticks;
+		}
+		DAC_Out(value);
+		GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
 	} // end while(1)
 }	// end main()
 
@@ -280,12 +368,85 @@ int main(void)
 //================================================================================
 #if (T42_2==1)
 
+#include "dac.h"
+
+#define PERIOD 200
+
+static unsigned int ticks = 0;
+unsigned int lastStart, value;
+
+// systick handler
+void SysTick_Handler(void){
+	ticks++;
+}
+
+//main
 int main(void)
 {	
+	// sin values
+	uint16_t sin[90] = { /*sin[0,…,89 degree], mean-value=511*/
+	511,520,529,538,547,556,564,573,582,591,
+	600,609,617,626,635,643,652,660,669,677,
+	686,694,702,711,719,727,735,743,751,759,
+	767,774,782,789,797,804,811,819,826,833,
+	839,846,853,860,866,872,879,885,891,897,
+	902,908,914,919,924,930,935,940,944,949,
+	954,958,962,966,970,974,978,981,985,988,
+	991,994,997,1000,1002,1005,1007,1009,1011,1013,
+	1014,1016,1017,1018,1019,1020,1021,1021,1022,1022};
+	
+	// initialize systick timer
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/1000);
+	
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Yellow);
+	GLCD_SetTextColor(Blue);
+	GLCD_DisplayString(0,1,FONT_16x24,(unsigned char*)"Lab microprocessor");
+	GLCD_DisplayString(1,3,FONT_16x24,(unsigned char*)"test4.2.1: DAC");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
 
-	while(1)
-	{
-		
+	// write data fields
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(4, 0, FONT_16x24,(unsigned char*)"output:");
+	GLCD_DisplayString(4, 11, FONT_16x24,(unsigned char*)"sine");
+	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"period:");
+	GLCD_DisplayString(5, 11, FONT_16x24,(unsigned char*)lcd_dez(PERIOD));
+	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"value:");
+
+	// initialize dac
+	DAC_Init();
+	
+	// set start variable
+	lastStart = ticks;
+	
+	while(1){
+		if(ticks - lastStart < 90){
+			value = sin[ticks - lastStart];
+		}
+		else if(ticks - lastStart == 90){
+			value = 1023;
+		}
+		else if(ticks - lastStart < 180){
+			value = sin[180 - (ticks - lastStart)];
+		}
+		else if(ticks - lastStart < 270){
+			value = 1023 - sin[ticks - lastStart - 180];
+		}
+		else if(ticks - lastStart == 270){
+			value = 0;
+		}
+		else if(ticks - lastStart < 360){
+			value = 1023 - sin[360 - (ticks - lastStart)];
+		}
+		else{
+			lastStart = ticks;
+		}
+		DAC_Out(value);
+		GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
 	} // end while(1)
 }	// end main()
 

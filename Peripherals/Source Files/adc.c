@@ -1,5 +1,6 @@
 
 #include <LPC17xx.h>
+#include "prio.h"
 
 void ADC_Init(uint8_t chsel, uint8_t intEn){
 	/*	initialize analog channels depending on chsel byte: bit0 -> a0.0, bit1 -> a0.1, ...
@@ -31,6 +32,7 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	//LPC_ADC->ADCR |=  ( 3 << 8);
 	//LPC_ADC->ADCR |=  ( 2 << 8);
 	
+	//LPC_SC->PCLKSEL0 &=~ (3 << 24);
 	//LPC_SC->PCLKSEL0 |=  (1 << 24);
 	//LPC_ADC->ADCR    |=  (7 <<  8);
 	// end test 4.1.2
@@ -64,6 +66,9 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	if(intEn){
 		LPC_ADC->ADINTEN |= (0xFF);
 		LPC_ADC->ADINTEN &=~(1<<8);
+		NVIC_ClearPendingIRQ(ADC_IRQn);
+		NVIC_SetPriority(ADC_IRQn, PRIO_ADC_IRQN);
+		NVIC_EnableIRQ(ADC_IRQn);
 	}
 }
 
