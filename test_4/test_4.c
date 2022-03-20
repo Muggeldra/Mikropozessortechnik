@@ -181,14 +181,45 @@ int main(void)
 //================================================================================
 #if (T41_4==1)
 
-int main(void)
-{	
+uint16_t adresult[8];
 
-	while(1)
-	{
-		
-	} // end while(1)
-}	// end main()
+int main(void)
+{
+	// Initialize LCD-Display, write headlines
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Yellow);
+	GLCD_SetTextColor(Blue);
+	GLCD_DisplayString(0,1,FONT_16x24,(unsigned char*)"Lab microprocessor");
+	GLCD_DisplayString(1,3,FONT_16x24,(unsigned char*)"test4.1.1: ADC");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+
+	// write data fields
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(4, 0, FONT_16x24,(unsigned char*)"Pot1 AD0.4");
+	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"Pot2 AD0.5");
+	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"LM35 AD0.3");
+	
+	// test1 from script
+	ADC_Init((7<<3), 1);
+	ADC_StartCnv((7<<3), 1);
+	
+	while(1){
+		GLCD_DisplayString(5, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[5]));
+		GLCD_DisplayString(4, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[4]));
+		GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)TempConv(adresult[3]));
+	}
+} // end main()
+
+void Adc_IrqHandler(void){
+	int i;
+	for(i = 0; i < 8; i++){
+		if((ADC_Stat()>>i)&1){
+			adresult[i] = ADC_GetValue(i);
+		}
+	}
+}
 
 #endif
 

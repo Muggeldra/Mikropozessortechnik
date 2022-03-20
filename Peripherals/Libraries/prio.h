@@ -5,4 +5,7 @@
 
 #define prioJoystick 6
 
+
+#define PRIO_ADC_IRQN 31
+
 #endif
