@@ -13,13 +13,33 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 				AD0.6  <-->  P0.03
 				AD0.7  <-->  P0.02
 	*/
+	
+	//enable power
 	LPC_SC->PCONP |= (1 << 12);
+	
+	// set adc clock
 	LPC_SC->PCLKSEL0 &=~ (3 << 24);
-	LPC_SC->PCLKSEL0 |=  (1 << 24);
+	
+	// default values
 	LPC_ADC->ADCR &=~ (0xFF << 8);
-	LPC_ADC->ADCR |=  (0x64 << 8);
+	LPC_ADC->ADCR |=  (0x01 << 8);
+	
+	// test 4.1.2
+	//LPC_ADC->ADCR |=  (23 << 8);
+	//LPC_ADC->ADCR |=  ( 9 << 8);
+	//LPC_ADC->ADCR |=  ( 4 << 8);
+	//LPC_ADC->ADCR |=  ( 3 << 8);
+	//LPC_ADC->ADCR |=  ( 2 << 8);
+	
+	//LPC_SC->PCLKSEL0 |=  (1 << 24);
+	//LPC_ADC->ADCR    |=  (7 <<  8);
+	// end test 4.1.2
+	
+	// set burst mode
 	LPC_ADC->ADCR |= (intEn << 16);
+	// set converter operational
 	LPC_ADC->ADCR |= (1 << 21);
+	// set no start
 	LPC_ADC->ADCR &=~(7 << 24);
 	
 	if((chsel>>3)&1){
@@ -49,11 +69,11 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 
 void ADC_StartCnv(uint8_t chsel, uint8_t burst){
 	LPC_ADC->ADCR &=~ (0xFF);
+	LPC_ADC->ADCR |= chsel;
 	if(!burst){
 		LPC_ADC->ADCR &=~ (7 << 24);
 		LPC_ADC->ADCR |=  (1 << 24);
 	}
-	LPC_ADC->ADCR |= chsel;
 }
 
 void ADC_StopCnv(void){
@@ -61,7 +81,7 @@ void ADC_StopCnv(void){
 }	
 
 uint32_t ADC_Stat(void){
-	return LPC_ADC->ADSTAT;
+		return LPC_ADC->ADSTAT;
 }
 
 uint16_t ADC_GetValue(unsigned int channel){

@@ -403,6 +403,11 @@
               <FileType>1</FileType>
               <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
             </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\gpio.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -809,6 +814,11 @@
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\gpio.c</FilePath>
             </File>
           </Files>
         </Group>
