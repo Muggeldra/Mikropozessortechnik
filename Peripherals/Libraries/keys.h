@@ -14,6 +14,8 @@ unsigned int Get_UpStat(void);
 unsigned int Get_DownStat(void);
 unsigned int Get_CenterStat(void);
 
+void JoyStick_IRQ_Init(void);
+
 void Matrix_Init(void);
 unsigned char Get_Mkey(void);
 

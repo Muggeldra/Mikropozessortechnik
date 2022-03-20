@@ -1,5 +1,6 @@
 #include <LPC17xx.h>
 #include "gpio.h"
+#include "prio.h"
 
 //Switches
 void Switch_Init(void){
@@ -90,6 +91,11 @@ unsigned int Get_DownStat(void){
 unsigned int Get_CenterStat(void){
 	if(GPIOGetValue(0,3)) {return 1;}
 	else{return 0;}
+}
+
+//Joystick Interrupt
+void JoyStick_IRQ_Init(void){
+	
 }
 
 //Matrix
