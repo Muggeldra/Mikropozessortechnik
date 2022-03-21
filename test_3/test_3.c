@@ -20,6 +20,7 @@ test_3.c
 #include "led.h"
 #include "keys.h"
 #include "prio.h"
+#include "lcd.h"
 
 
 //================================================================================
@@ -28,6 +29,10 @@ test_3.c
 
 #define FONT_6x8   0     //Font-Index für ASCII Font 6x8
 #define FONT_16x24 1     //Font-Index für ASCII Font 16x24
+
+#define RGB_Red 1
+#define RGB_Green 2
+#define RGB_Blue 0
 
 //================================================================================
 //  Test T3_1
@@ -119,7 +124,7 @@ int main(void)
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.2 TA12-Int.");
-	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
 
 	while(1)
 	{
@@ -158,7 +163,7 @@ int main(void)
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.3 Joyst.-Int.");
-	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.10"); //TO-DO: Set correct group
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
 	
 	JoyStick_IRQ_Init();
 	
@@ -185,13 +190,107 @@ int main(void)
 //================================================================================
 //  Main-Funktion Versuchsteil T3_4
 //================================================================================
-#if (T3_1 == 1)
+#if (T3_5 == 1)
+
+static unsigned int ticks = 0;
+void SysTick_Handler(void){
+		ticks++;
+	}
 
 int main(void)
 {	
+	uint8_t walkingLight = 129;
+	unsigned char previousSwitches = 0;
+	uint32_t walkingLightDelay = 10;
+	uint32_t walkingLightTimer = 0;
+	uint32_t joystickDelay = 10;
+	uint32_t joystickTimer = 0;
+	int walkingLightDirection = 0;
+	
+	Switch_Init();
+	button_Init();
+	Joystick_Init();
+	LED_Init();
+	RGB_Init();
+	
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Green);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab Microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.4 running light");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
+	
+	GPIOSetDir(2,0,GPIO_OUTPUT);
+	GPIOSetValue(2,0,0);
+	GPIOSetDir(2,1,GPIO_OUTPUT);
+	GPIOSetValue(2,1,0);
 
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/100);
+	SysTick_Handler();
+	
 	while(1)
 	{
+		GLCD_Simulation();
+		
+		//value
+		if(previousSwitches != Get_SwitchPos() && Get_CenterStat()){
+			previousSwitches = Get_SwitchPos();
+			walkingLight = Get_SwitchPos();
+		}
+		
+		//delay
+		if(ticks >= walkingLightDelay+walkingLightTimer){
+			walkingLightTimer = ticks;
+			walkingLight = rolchar(walkingLight, walkingLightDirection);
+			GPIOToggle(2,0);
+		}
+		
+		//Joystick
+		if(ticks >= joystickDelay+joystickTimer){
+			joystickTimer = ticks;
+			GPIOToggle(2,1);
+			//direction
+			if(Get_LeftStat()){
+				walkingLightDirection = 1;
+			}
+			else if(Get_RightStat()){
+				walkingLightDirection = 0;
+			}
+			//delay changer
+			if(Get_UpStat() && walkingLightDelay < 100){
+				walkingLightDelay += 10;
+				RGB_Off(RGB_Green);
+				RGB_On(RGB_Blue);
+			}
+			else if(Get_DownStat() && walkingLightDelay > 10){
+				walkingLightDelay -= 10;
+				RGB_Off(RGB_Red);
+				RGB_On(RGB_Blue);
+			}
+			if(walkingLightDelay >= 100){
+				RGB_Off(RGB_Blue);
+				RGB_On(RGB_Red);
+			}
+			else if(walkingLightDelay <= 10){
+				RGB_Off(RGB_Blue);
+				RGB_On(RGB_Green);
+			}
+		}
+		
+		//LCD
+		GLCD_DisplayString(4,0,FONT_16x24,(unsigned char*)"running light with");
+		GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)"S-Tick:");
+		GLCD_DisplayString(6,1,FONT_16x24,(unsigned char*)"Speed:");
+		GLCD_DisplayString(7,1,FONT_16x24,(unsigned char*)"Dir.:");
+		GLCD_DisplayString(8,1,FONT_16x24,(unsigned char*)"LEDs:");
+		
+		GLCD_DisplayString(6,9,FONT_16x24,(unsigned char*)lcd_dez(walkingLightDelay));
+		GLCD_DisplayString(8,9,FONT_16x24,(unsigned char*)lcd_dez(previousSwitches));
+		
+		if(walkingLightDirection == 1){GLCD_DisplayString(7,9,FONT_16x24,(unsigned char*)"ccw");}
+		else{GLCD_DisplayString(7,9,FONT_16x24,(unsigned char*)"cw  ");}
 		
 	} // end while(1)
 }	// end main()
@@ -203,8 +302,12 @@ int main(void)
 //================================================================================
 //  Test T3_5
 //================================================================================
-#if (T3_5 == 1)
+#if (T3_1 == 1)
 
+
+void EINT0_IRQHandler(void){
+	LPC_SC->EXTINT |= (1<<1);
+}
 int main(void)
 {	
 

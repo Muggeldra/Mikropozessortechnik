@@ -24,6 +24,9 @@ test_1.c
 //definition constants:
 //================================================================================
 
+#define RGB_Red 1
+#define RGB_Green 2
+#define RGB_Blue 0
 
 //================================================================================
 //  Main-Funktion Test1 T1_1
@@ -33,10 +36,6 @@ test_1.c
 
 #define OUT_PORT 0
 #define PORT_PIN 0
-
-#define RGB_Red 1
-#define RGB_Green 2
-#define RGB_Blue 0
 
 int main(void)
 {		
@@ -64,13 +63,16 @@ int main(void)
 //================================================================================
 #if (T1_2 == 1)
 
+
 int main(void)
 {	
 	int TA12StateBefore = 0;
 	int TA11StateBefore = 0;
 	int TA10StateBefore = 0;
-
+	
+	GLCD_Init();
 	button_Init();
+	RGB_Init();
 	Joystick_Init();
 
 	while(1)
@@ -93,6 +95,7 @@ int main(void)
 //================================================================================
 #if (T1_3 == 1)
 
+
 int main(void)
 {	
 	int LeftStateBefore = 0;
@@ -103,6 +106,7 @@ int main(void)
 	int CenterStateBeforeG = 0;
 	int CenterStateBeforeB = 0;
 	
+	GLCD_Init();
 	Joystick_Init();
 	LED_Init();
 	RGB_Init();
@@ -136,12 +140,13 @@ int main(void)
 {	
 	uint8_t walkingLight = 129;
 	LED_Init();
+	GLCD_Init();
+	walkingLight = rolchar(walkingLight, 0); //0 = right //1 = left
 	
 	while(1)
 	{
 		//prep 1.9
 		GLCD_Simulation();
-		walkingLight = rolchar(walkingLight, 0);
 	} // end while(1)
 }	// end main()
 
