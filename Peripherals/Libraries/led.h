@@ -13,6 +13,6 @@ void RGB_Out(unsigned char num);
 void RGB_Toggle(unsigned int num);
 unsigned int LED_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
 unsigned int RGB_FlipFlop(unsigned int led,unsigned int button, unsigned int buttonBefore);
-uint8_t rolchar(uint8_t value, uint8_t dir);
+void rolchar(uint8_t* value, uint8_t dir);
 
 #endif

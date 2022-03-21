@@ -161,9 +161,9 @@ int main(void)
 {	
 	uint8_t walkingLight = 129;
 	unsigned char previousSwitches = 0;
-	uint32_t walkingLightDelay = 1308;
+	uint32_t walkingLightDelay = 300000;
 	uint32_t walkingLightTimer = 0;
-	uint32_t joystickDelay = 261;
+	uint32_t joystickDelay = 15000;
 	uint32_t joystickTimer = 0;
 	int walkingLightDirection = 0;
 	
@@ -194,6 +194,7 @@ int main(void)
 		if(walkingLightTimer >= walkingLightDelay){
 			walkingLightTimer = 0;
 			walkingLight = rolchar(walkingLight, walkingLightDirection);
+			LED_Out(walkingLight);
 			GPIOToggle(2,0);
 		}
 		//Joystick
@@ -209,21 +210,21 @@ int main(void)
 				walkingLightDirection = 0;
 			}
 			//delay changer
-			if(Get_UpStat() && walkingLightDelay < 5000){
-				walkingLightDelay += 475;
+			if(Get_UpStat() && walkingLightDelay < 300000){
+				walkingLightDelay += 15000;
 				RGB_Off(RGB_Green);
 				RGB_On(RGB_Blue);
 			}
-			else if(Get_DownStat() && walkingLightDelay > 250){
-				walkingLightDelay -= 475;
+			else if(Get_DownStat() && walkingLightDelay > 15000){
+				walkingLightDelay -= 15000;
 				RGB_Off(RGB_Red);
 				RGB_On(RGB_Blue);
 			}
-			if(walkingLightDelay >= 5000){
+			if(walkingLightDelay >= 300000){
 				RGB_Off(RGB_Blue);
 				RGB_On(RGB_Red);
 			}
-			else if(walkingLightDelay <= 250){
+			else if(walkingLightDelay <= 15000){
 				RGB_Off(RGB_Blue);
 				RGB_On(RGB_Green);
 			}
@@ -239,15 +240,39 @@ int main(void)
 //================================================================================
 #if (T1_6 == 1)
 
-int main(void)
-{	
+int main(){
 
-	while(1)
-	{
-		
-	} // end while(1)
-}	// end main()
-
+	uint8_t dir=0, value;
+	uint32_t DELAY_LED=2500000, DELAY_JOYSTICK=500000;
+	uint32_t delay_led=0, delay_joystick=0;
+//include the necessary init code here
+	GLCD_Init();
+	Switch_Init();
+	button_Init();
+	Joystick_Init();
+	LED_Init();
+	RGB_Init();
+	
+	GPIOSetDir(2,0,GPIO_OUTPUT);
+	GPIOSetValue(2,0,0);
+	GPIOSetDir(2,1,GPIO_OUTPUT);
+	GPIOSetValue(2,1,0);
+	
+	while(1) { delay_led++; delay_joystick++;
+	if (delay_led>DELAY_LED) {delay_led=0;
+	LPC_GPIO2->FIOPIN ^=(1UL<<0); //Toggle, output P2.0 (PWM2.1) to the
+	// logic analyzer/ oscilloscop
+	rolchar(&value,dir);
+	LED_Out(value);}
+	if (delay_joystick>DELAY_JOYSTICK){
+		delay_joystick =0;
+		LPC_GPIO2->FIOPIN ^=(1UL<<1); //Toggle, output P2.1 (PWM2.2) to the
+		//logic analyzer/ oscilloscop
+		if (Get_RightStat()) dir=1; 
+		if (Get_LeftStat()) dir=0;
+		if (Get_CenterStat())value=Get_SwitchPos();}
+	}
+}
 #endif
 
 

@@ -177,7 +177,7 @@ int main(void){
 #include "lcd.h"
 
 int main(void){	
-	unsigned char lastKey = 0x20;
+	unsigned char lastKey = 0x20, lastRead;
 	// Initialize LCD-Display, write headlines
 	GLCD_Init();
 	GLCD_Clear(White);
@@ -202,7 +202,8 @@ int main(void){
 	
 	while(1){	
 		GLCD_Simulation();
-		if(Get_Mkey() != 0x20){ lastKey = Get_Mkey(); }
+		lastRead = Get_Mkey();
+		if(lastRead != 0x20){ lastKey = lastRead; }
 		else{
 			GLCD_DisplayChar(6, 10, FONT_16x24, lastKey);
 		}

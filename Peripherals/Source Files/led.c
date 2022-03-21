@@ -226,23 +226,21 @@ unsigned int LED_FlipFlop(unsigned int led,unsigned int button, unsigned int but
 		}
 }
 
-uint8_t rolchar(uint8_t value, uint8_t dir){
+void rolchar(uint8_t* value, uint8_t dir){
 	if(dir == 0){
-		if(value & (1 << 7)){
-			value = ((value << 1)+1);
+		if(*value & (1 << 7)){
+			*value = ((*value << 1)+1);
 		}
 		else{
-			value = (value << 1);
+			*value = (*value << 1);
 		}
 	}
 	else if(dir == 1){
-		if(value & 1){
-			value = ((value >> 1)+128);
+		if(*value & 1){
+			*value = ((*value >> 1)+128);
 		}
 		else{
-			value = (value >> 1);
+			*value = (*value >> 1);
 		}
 	}
-	LED_Out(value);
-	return value;
 }

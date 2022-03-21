@@ -37,7 +37,7 @@ test_3.c
 //================================================================================
 //  Test T3_1
 //================================================================================
-#if (T3_2 == 1)
+#if (T3_1 == 1)
 static unsigned int ticks = 0;
 void SysTick_Handler(void){
 		ticks++;
@@ -93,7 +93,7 @@ int main(void)
 //================================================================================
 //  Main-Funktion Versuchsteil T3_2
 //================================================================================
-#if (T3_3 == 1)
+#if (T3_2 == 1)
 int count_TA12_int = 0;
 
 void EINT1_IRQ_Init(void){
@@ -125,11 +125,12 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.2 TA12-Int.");
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
-
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
 	while(1)
 	{
 		GLCD_Simulation();
-		GLCD_DisplayString(2,1,FONT_16x24,(unsigned char*)lcd_dez(count_TA12_int)); 
+		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)lcd_dez(count_TA12_int)); 
 		
 	} // end while(1)
 }	// end main()
@@ -140,7 +141,7 @@ int main(void)
 //================================================================================
 //  Main-Funktion Versuchsteil T3_3
 //================================================================================
-#if (T3_4 == 1)
+#if (T3_3 == 1)
 
 	int counterUp = 0;
 	int counterDown = 0;
@@ -164,6 +165,8 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.3 Joyst.-Int.");
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
 	
 	JoyStick_IRQ_Init();
 	
@@ -190,7 +193,7 @@ int main(void)
 //================================================================================
 //  Main-Funktion Versuchsteil T3_4
 //================================================================================
-#if (T3_5 == 1)
+#if (T3_4 == 1)
 
 static unsigned int ticks = 0;
 void SysTick_Handler(void){
@@ -220,6 +223,8 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab Microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.4 running light");
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
 	
 	GPIOSetDir(2,0,GPIO_OUTPUT);
 	GPIOSetValue(2,0,0);
@@ -243,7 +248,8 @@ int main(void)
 		//delay
 		if(ticks >= walkingLightDelay+walkingLightTimer){
 			walkingLightTimer = ticks;
-			walkingLight = rolchar(walkingLight, walkingLightDirection);
+			rolchar(&walkingLight, walkingLightDirection);
+			LED_Out(walkingLight);
 			GPIOToggle(2,0);
 		}
 		
@@ -302,7 +308,7 @@ int main(void)
 //================================================================================
 //  Test T3_5
 //================================================================================
-#if (T3_1 == 1)
+#if (T3_5 == 1)
 
 
 void EINT0_IRQHandler(void){

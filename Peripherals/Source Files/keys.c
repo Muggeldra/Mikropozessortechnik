@@ -19,6 +19,8 @@ void Switch_Init(void){
 }
 
 unsigned char Get_SwitchPos(void){
+	return ((LPC_GPIO1->FIOPIN>>18) & 0xFF);	
+/*	
 	unsigned char value = 0;
 	if(GPIOGetValue(1,25)){value += 128;}
 	if(GPIOGetValue(1,24)){value += 64;}
@@ -28,7 +30,9 @@ unsigned char Get_SwitchPos(void){
 	if(GPIOGetValue(1,20)){value += 4;}
 	if(GPIOGetValue(1,19)){value += 2;}
 	if(GPIOGetValue(1,18)){value += 1;}
-	return value;
+*/	
+	
+	//return value;
 }
 
 //Buttons

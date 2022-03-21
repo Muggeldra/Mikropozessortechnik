@@ -17,6 +17,7 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	
 	//enable power
 	LPC_SC->PCONP |= (1 << 12);
+	LPC_SC->PCONP |= (1 << 15);
 	
 	// set adc clock
 	LPC_SC->PCLKSEL0 &=~ (3 << 24);
