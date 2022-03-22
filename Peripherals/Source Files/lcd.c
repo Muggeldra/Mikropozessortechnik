@@ -7,36 +7,48 @@
 char *lcd_bin (uint8_t value){
 	static char text_string[9];
 	unsigned char asc[] = "0123456789ABCDEF";
-	text_string[0] = asc[(value >> 7)&1];
-	text_string[1] = asc[(value >> 6)&1];
-	text_string[2] = asc[(value >> 5)&1];
-	text_string[3] = asc[(value >> 4)&1];
-	text_string[4] = asc[(value >> 3)&1];
-	text_string[5] = asc[(value >> 2)&1];
-	text_string[6] = asc[(value >> 1)&1];
-	text_string[7] = asc[(value >> 0)&1];
-	text_string[8] = 0; //end of string
+	int i;
+	
+	// values
+	for(i = 0; i < 8; i++){
+		text_string[i] = asc[(value >> (7-i))&1];
+	}
+	
+	// end of string
+	text_string[8] = 0;
+	
 	return (text_string);
 }
 
 char *lcd_hex (uint16_t value){
 	static char text_string[7];
 	unsigned char asc[] = "0123456789ABCDEFx";
+	int i;
+	
+	// time measurements
 	/*GPIOSetDir(2, 0, 1);
 	GPIOSetDir(2, 1, 1);
 	
 	GPIOSetValue(2, 0, 1);*/
+	
+	// 0x
 	text_string[0] = asc[0];
 	text_string[1] = asc[16];
-	text_string[2] = asc[((value/(16*16*16)) % 16)];
-	text_string[3] = asc[((value/(16*16)) % 16)];
-	text_string[4] = asc[((value/(16)) % 16)];
-	text_string[5] = asc[((value/(1)) % 16)];
+	
+	// values
+	for(i = 0; i < 4; i++){
+		text_string[2 + i] = asc[(value >> (12 - (4 * i))) & 0xF];
+	}
+	
+	// end of string
 	text_string[6] = 0;
+	
+	// time measurements
 	/*GPIOSetValue(2, 0, 0);
 	GPIOSetValue(2, 1, 1);
 	sprintf(text_string,"%5u",value); //alternative use sprintf
 	GPIOSetValue(2, 1, 0);*/
+	
 	return (text_string);
 }
 
@@ -74,16 +86,15 @@ char *AD_volt(unsigned short val){
 }
 
 char *TempConv(unsigned short val){
-	static char text_string[8];
-	unsigned char asc[] = "0123456789.°C";
+	static char text_string[7];
+	unsigned char asc[] = "0123456789.C";
 	val = (val * 3300) / 4095;
 	text_string[0] = asc[(val/1000)%10];
 	text_string[1] = asc[(val/100)%10];
 	text_string[2] = asc[10];
 	text_string[3] = asc[(val/10)%10];
 	text_string[4] = asc[(val/1)%10];
-	text_string[5] = asc[11];
-	text_string[6] = asc[12];
-	text_string[7] = 0;
+	text_string[5] = asc[12];
+	text_string[6] = 0;
 	return (text_string);
 }

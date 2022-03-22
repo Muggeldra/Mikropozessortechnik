@@ -4,35 +4,13 @@
 
 //Switches
 void Switch_Init(void){
-	GPIOSetDir(1,18,0);
-	GPIOSetDir(1,22,0);
-	GPIOSetDir(1,20,0);
-	GPIOSetDir(1,24,0);
-	GPIOSetDir(1,19,0);
-	GPIOSetDir(1,23,0);
-	GPIOSetDir(1,21,0);
-	GPIOSetDir(1,25,0);
-	
+	LPC_GPIO1->FIODIR &=~ (0xFF << 18);
 	LPC_PINCON->PINMODE3&=~(0xFFFF<<4);
 	LPC_PINCON->PINMODE3 |= (0xAAAA<<4);
-	
 }
 
 unsigned char Get_SwitchPos(void){
 	return ((LPC_GPIO1->FIOPIN>>18) & 0xFF);	
-/*	
-	unsigned char value = 0;
-	if(GPIOGetValue(1,25)){value += 128;}
-	if(GPIOGetValue(1,24)){value += 64;}
-	if(GPIOGetValue(1,23)){value += 32;}
-	if(GPIOGetValue(1,22)){value += 16;}
-	if(GPIOGetValue(1,21)){value += 8;}
-	if(GPIOGetValue(1,20)){value += 4;}
-	if(GPIOGetValue(1,19)){value += 2;}
-	if(GPIOGetValue(1,18)){value += 1;}
-*/	
-	
-	//return value;
 }
 
 //Buttons
@@ -68,6 +46,9 @@ void Joystick_Init(void){
 	GPIOSetDir(0,3,0);
 	GPIOSetDir(0,21,0);
 	GPIOSetDir(0,25,0);
+	
+	//checken
+	//LPC_GPIO0->FIODIR &=~ (0x3440001 << 3);
 	
 	LPC_PINCON->PINMODE0 &= ~(3 <<  6);LPC_PINCON->PINMODE0 |= (2 <<  6);//P0.03  
 	LPC_PINCON->PINMODE1 &= ~(3 << 10);LPC_PINCON->PINMODE1 |= (2 << 10);//P0.21 
