@@ -160,16 +160,9 @@ unsigned char Get_Mkey(void){
 
 //Encoder
 void Encoder_Init(void){
-	LPC_PINCON->PINSEL1 &=~ (3<<14);
-	LPC_PINCON->PINSEL1 &=~ (3<<16);
-	LPC_PINCON->PINMODE1 &= ~(3 <<  14);LPC_PINCON->PINMODE1 |= (2 <<  14);
-	LPC_PINCON->PINMODE1 &= ~(3 <<  16);LPC_PINCON->PINMODE1 |= (2 <<  16);
-	GPIOSetDir(0,23,0);
-	GPIOSetDir(0,24,0);
-	LPC_GPIOINT->IO0IntEnR |= (1<<23);
-	LPC_GPIOINT->IO0IntEnR |= (1<<24);
-	
 	LPC_SC->PCONP |= (1<<15);
+	
+	//center interupt
 	LPC_PINCON->PINSEL4 &=~ (3<<20);
 	LPC_PINCON->PINSEL4 |= (1<<20);
 	LPC_PINCON->PINMODE4 &=~ (3<<20);
@@ -178,7 +171,25 @@ void Encoder_Init(void){
 	LPC_SC->EXTPOLAR |= (1<<0);
 	LPC_SC->EXTINT |= (1<<0);
 	NVIC_ClearPendingIRQ(EINT0_IRQn);
-	NVIC_SetPriority(EINT0_IRQn, prioEncoder);
+	NVIC_SetPriority(EINT0_IRQn, prioEncoderCenter);
 	NVIC_EnableIRQ(EINT0_IRQn);
+	
+	//A interrupt
+	LPC_PINCON->PINSEL1 &=~ (3<<14);
+	LPC_PINCON->PINMODE1 &= ~(3 <<  14);LPC_PINCON->PINMODE1 |= (2 <<  14);
+	LPC_GPIO0->FIODIR &=~ (1<<14);
+	LPC_GPIOINT->IO0IntEnR |= (1<<23);
+	//LPC_GPIOINT->IO0IntStatR = 0;
+	NVIC_ClearPendingIRQ(EINT3_IRQn);
+	NVIC_SetPriority(EINT3_IRQn, prioEncoderA);
+	NVIC_EnableIRQ(EINT3_IRQn);
+		
+	
+	//B GPIO
+	LPC_PINCON->PINSEL1 &=~ (3<<16);
+	LPC_PINCON->PINMODE1 &= ~(3 <<  16);LPC_PINCON->PINMODE1 |= (2 <<  16);
+	GPIOSetDir(0,24,0);
+	
+	
 }
 

@@ -310,15 +310,69 @@ int main(void)
 //================================================================================
 #if (T3_5 == 1)
 
+int count_encoder = 3;
 
 void EINT0_IRQHandler(void){
 	LPC_SC->EXTINT |= (1<<1);
+	count_encoder = 1;
 }
+
+void EINT3_IRQHandler(void){
+	if(LPC_GPIOINT->IO0IntStatR & (1<<23)){
+		if(GPIOGetValue(0,24) && count_encoder < 5){
+		count_encoder++;	
+		}
+		else if(!GPIOGetValue(0,24) && count_encoder > 1){
+			count_encoder--;
+		}
+		LPC_GPIOINT->IO0IntClr |= (1<<23);
+	}
+	
+}
+
+void menuSelect(int selector,int row){
+	if(selector == row){
+		GLCD_SetBackColor(Black);
+		GLCD_SetTextColor(White);
+		GLCD_DisplayString(4+count_encoder,10,FONT_16x24,(unsigned char*)"-");
+	}
+	else{
+		GLCD_SetBackColor(White);
+		GLCD_SetTextColor(Black);
+		GLCD_DisplayString(4+count_encoder,10,FONT_16x24,(unsigned char*)" ");
+	}
+}
+
 int main(void)
 {	
+	Encoder_Init();
+	
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Blue);
+	GLCD_SetTextColor(White);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab Microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.5 Encoder");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
 
 	while(1)
 	{
+		GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)"counter: ");
+		GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)lcd_dez(count_encoder));
+		
+		menuSelect(count_encoder, 1);
+		GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)"Menue 1:");
+		menuSelect(count_encoder, 2);
+		GLCD_DisplayString(6,0,FONT_16x24,(unsigned char*)"Menue 2:");
+		menuSelect(count_encoder, 3);
+		GLCD_DisplayString(7,0,FONT_16x24,(unsigned char*)"Menue 3:");
+		menuSelect(count_encoder, 4);
+		GLCD_DisplayString(8,0,FONT_16x24,(unsigned char*)"Menue 4:");
+		menuSelect(count_encoder, 5);
+		GLCD_DisplayString(9,0,FONT_16x24,(unsigned char*)"Menue 5:");
+		
 		
 	} // end while(1)
 }	// end main()
@@ -333,11 +387,112 @@ int main(void)
 //================================================================================
 #if (T3_6 == 1)
 
+uint32_t ticks = 0;
+
+void SysTick_Handler(void){
+		ticks++;
+	}
+	
+
 int main(void)
 {	
+	int editMode = 0;
+	int centerStatBefore = 0;
+	int leftStatBefore = 0;
+	int rightStatBefore = 0;
+	int upStatBefore = 0;
+	int downStatBefore = 0;
+	int editSelector = 0;
+	int stepSize = 1;
+	uint32_t oldTicks = 0;
+	
+	Joystick_Init();
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Green);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab Microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.6 time of day");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
+	
+	GLCD_SetBackColor(White);
+	GLCD_SetTextColor(Black);
+	GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)"Actual time of day:");
+	
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/100);
+	SysTick_Handler();
 
 	while(1)
 	{
+		//zeit anpassen für lab
+		//nice anzeigen
+		
+		//display time
+		if(editMode == 0){
+			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_dez(ticks));
+		}
+		if(editMode == 1){
+			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_dez(oldTicks));
+		}
+		
+		//time editor
+		//toggle edit mode
+		if(Get_CenterStat() && centerStatBefore == 0){
+			if(editMode == 1){
+				editMode = 0;
+				ticks = oldTicks;
+			}
+			else{
+				editMode = 1;
+				oldTicks = ticks;
+			}
+			centerStatBefore = 1;
+		}
+		else if(!Get_CenterStat() && centerStatBefore == 1){
+			centerStatBefore = 0;
+		}
+		
+		if(editMode == 1){
+			//select what to edit
+			if(Get_LeftStat() && editSelector < 2 && leftStatBefore == 0){
+				leftStatBefore = 1;
+				editSelector++;
+			}
+			else if(!Get_LeftStat() && leftStatBefore == 1){
+				leftStatBefore = 0;
+			}
+			
+			if(Get_RightStat() && editSelector > 0 && rightStatBefore == 0){
+				rightStatBefore = 1;
+				editSelector--;
+			}
+			else if(!Get_RightStat() && rightStatBefore == 1){
+				rightStatBefore = 0;
+			}
+			if(editSelector == 0){stepSize = 1;}
+			else if(editSelector == 1){stepSize = 60;}
+			else if(editSelector == 2){stepSize = 3600;}
+			//edit
+			if(Get_UpStat() && upStatBefore == 0){
+				upStatBefore = 1;
+				oldTicks = oldTicks + stepSize;
+			}
+			else if(!Get_UpStat() && upStatBefore == 1){
+				upStatBefore = 0;
+			}
+			
+			if(Get_DownStat() && downStatBefore == 0){
+				downStatBefore = 1;
+				oldTicks = oldTicks - stepSize;
+			}
+			else if(!Get_DownStat() && downStatBefore == 1){
+				downStatBefore = 0;
+			}
+		}
+		
+		
+		
 		
 	} // end while(1)
 }	// end main()
