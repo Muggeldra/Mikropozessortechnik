@@ -2,6 +2,7 @@
 #include <LPC17xx.h>
 #include "gpio.h"
 #include <stdio.h>
+#include <time.h>
 
 // functions
 char *lcd_bin (uint8_t value){
@@ -55,7 +56,7 @@ char *lcd_hex (uint16_t value){
 char *lcd_dez (uint16_t value){
 	static char text_string[6];
 	unsigned char asc[] = "0123456789ABCDEF";
-	/*GPIOSetDir(2, 0, 1);
+	GPIOSetDir(2, 0, 1);
 	GPIOSetDir(2, 1, 1);
 	
 	GPIOSetValue(2, 0, 1);
@@ -67,9 +68,22 @@ char *lcd_dez (uint16_t value){
 	text_string[5] = 0;	//text_string[5] must be 0 (end0 of string)
 	
 	GPIOSetValue(2, 0, 0);
-	GPIOSetValue(2, 1, 1);*/
-	sprintf(text_string,"%5u",value); //alternative use sprintf
+	GPIOSetValue(2, 1, 1);
+	//sprintf(text_string,"%5u",value); //alternative use sprintf
 	//GPIOSetValue(2, 1, 0);
+	return (text_string);
+}
+
+char *lcd_time (uint32_t value){
+		static char text_string[8];
+    struct tm  ts;
+    char       buf[80];
+
+    // Format time, "ddd yyyy-mm-dd hh:mm:ss zzz"
+    ts = *localtime(&value);
+    strftime(buf, sizeof(buf), "%H:%M:%S", &ts);
+	  sprintf(text_string,"%s",buf);
+	
 	return (text_string);
 }
 

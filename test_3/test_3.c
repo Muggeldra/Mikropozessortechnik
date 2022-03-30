@@ -430,17 +430,20 @@ int main(void)
 		
 		//display time
 		if(editMode == 0){
-			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_dez(ticks));
+			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_time(ticks/100));
 		}
-		if(editMode == 1){
-			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_dez(oldTicks));
+		else if(editMode == 1){
+			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_time(oldTicks/100));
+			GLCD_DisplayString(6,16-(editSelector*2.6),FONT_16x24,(unsigned char*)"^^");
 		}
+		
 		
 		//time editor
 		//toggle edit mode
 		if(Get_CenterStat() && centerStatBefore == 0){
 			if(editMode == 1){
 				editMode = 0;
+				GLCD_DisplayString(6,10,FONT_16x24,(unsigned char*)"           ");
 				ticks = oldTicks;
 			}
 			else{
@@ -458,6 +461,7 @@ int main(void)
 			if(Get_LeftStat() && editSelector < 2 && leftStatBefore == 0){
 				leftStatBefore = 1;
 				editSelector++;
+				GLCD_DisplayString(6,10,FONT_16x24,(unsigned char*)"           ");
 			}
 			else if(!Get_LeftStat() && leftStatBefore == 1){
 				leftStatBefore = 0;
@@ -466,13 +470,14 @@ int main(void)
 			if(Get_RightStat() && editSelector > 0 && rightStatBefore == 0){
 				rightStatBefore = 1;
 				editSelector--;
+				GLCD_DisplayString(6,10,FONT_16x24,(unsigned char*)"           ");
 			}
 			else if(!Get_RightStat() && rightStatBefore == 1){
 				rightStatBefore = 0;
 			}
-			if(editSelector == 0){stepSize = 1;}
-			else if(editSelector == 1){stepSize = 60;}
-			else if(editSelector == 2){stepSize = 3600;}
+			if(editSelector == 0){stepSize = 100;}
+			else if(editSelector == 1){stepSize = 6000;}
+			else if(editSelector == 2){stepSize = 360000;}
 			//edit
 			if(Get_UpStat() && upStatBefore == 0){
 				upStatBefore = 1;
