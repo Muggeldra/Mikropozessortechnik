@@ -18,6 +18,7 @@ test_6.c
 #include "glcd.h"
 #include "gpio.h"
 #include "lcd.h"
+#include "i2c.h"
 
 //================================================================================
 //Definition v. Konstanten:
@@ -78,8 +79,8 @@ int main(void)
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7"); //TO-DO: Set correct group
 	
 	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"sec:");
-	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"out left:");
-	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"out right:");
+	GLCD_DisplayString(5, 1, FONT_16x24, (unsigned char*)"out left:");
+	GLCD_DisplayString(6, 1, FONT_16x24, (unsigned char*)"out right:");
 	
 	// SPI Init
 	LPC_PINCON->PINSEL0 &=~ (3<<30); //P0.15
@@ -108,9 +109,9 @@ int main(void)
 
 	while(1)
 	{
-		GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)lcd_dez(seconds));
-		GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)lcd_hex(outLeft));
-		GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)lcd_hex(outRight));
+		GLCD_DisplayString(4, 11, FONT_16x24, (unsigned char*)lcd_dez(seconds));
+		GLCD_DisplayString(5, 11, FONT_16x24, (unsigned char*)lcd_hex(outLeft));
+		GLCD_DisplayString(6, 11, FONT_16x24, (unsigned char*)lcd_hex(outRight));
 	} // end while(1)
 }	// end main()
 
@@ -124,12 +125,50 @@ int main(void)
 //================================================================================
 #if (T6_2==1)
 
+unsigned int ticks = 0;
+unsigned int seconds = 0;
+unsigned char SegChars[10]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
+unsigned char sbuf[3];
+int32_t ret;
+
+void SysTick_Handler(void){
+		ticks++;
+	
+		// seconds variable
+		if(!(ticks % 100)){
+			seconds++;
+			if(seconds >= 60){
+				seconds = 0;
+			}
+		}
+}
+
 int main(void)
 {	
+	// systick 10ms
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/100);
+	SysTick_Handler();
+	
+	// LCD Init
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Maroon);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.2 switches");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7"); //TO-DO: Set correct group
+	
+	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"sec:");
+	GLCD_DisplayString(5, 1, FONT_16x24, (unsigned char*)"out bytes:");
+	
+	//i2c init
+	I2C1_Init();sbuf[0]=0;sbuf[1]=0x17;//initialize 7 segment display, sbuf[] is to define
+	ret=I2C1Write(0x38,sbuf,2); //it is only possible with connected hardware
 
 	while(1)
 	{
-		
+		out7seg((seconds/10)%10, seconds%10, 5-((seconds/10)%10), 9-(seconds%10));
 	} // end while(1)
 }	// end main()
 

@@ -122,6 +122,14 @@ int32_t I2C1Read(uint8_t addr,uint8_t *rx_data, uint8_t rx_length){
 } //end of I2C1Read()
 
 
-
-
-
+//noobiger studentenstuff
+int32_t out7seg(uint8_t seg1, uint8_t seg2, uint8_t seg3, uint8_t seg4){
+	uint8_t tx_dat[5];
+	tx_dat[0] = 0x01;
+	tx_dat[1] = seg1;
+	tx_dat[2] = seg2|0x80;
+	tx_dat[3] = seg3;
+	tx_dat[4] = seg4;
+	
+	I2C1Write(0x38, tx_dat, 5);
+}
