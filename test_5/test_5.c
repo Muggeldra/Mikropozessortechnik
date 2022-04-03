@@ -13,10 +13,16 @@ test5.c
 //================================================================================
 #include <LPC17xx.h>
 #include <stdio.h>
-
+#include "core_cm3.h"
 #include "tests.h"
 #include "GLCD.h"
-
+#include "gpio.h"
+#include "delay.h"
+#include "led.h"
+#include "keys.h"
+#include "prio.h"
+#include "lcd.h"
+#include "Time.h"
 
 //================================================================================
 //Definition 
@@ -31,12 +37,26 @@ test5.c
 //================================================================================
 #if (T5_1==1)
 
+int baum = 10;
+
 int main(void)
 {	
+	//counter_Init(0,1,1);
+	
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Green);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.1 Counter");
+
+	
 
 	while(1)
 	{
-		
+		//LCD will nicht D:
+		//LPC_TIM0->TC;
+		GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(baum));
 	} // end while(1)
 }	// end main()
 
