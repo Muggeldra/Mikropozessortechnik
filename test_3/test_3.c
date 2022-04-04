@@ -311,6 +311,7 @@ int main(void)
 #if (T3_5 == 1)
 
 int count_encoder = 3;
+int oldCount_encoder = 0;
 
 void EINT0_IRQHandler(void){
 	LPC_SC->EXTINT |= (1<<1);
@@ -339,7 +340,7 @@ void menuSelect(int selector,int row){
 	else{
 		GLCD_SetBackColor(White);
 		GLCD_SetTextColor(Black);
-		GLCD_DisplayString(4+count_encoder,10,FONT_16x24,(unsigned char*)" ");
+		GLCD_DisplayString(4+row,10,FONT_16x24,(unsigned char*)" ");
 	}
 }
 
@@ -354,25 +355,27 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab Microproc.");
 	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test3.5 Encoder");
 	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7");
-	GLCD_SetBackColor(White);
-	GLCD_SetTextColor(Black);
 
 	while(1)
 	{
-		GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)"counter: ");
-		GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)lcd_dez(count_encoder));
-		
-		menuSelect(count_encoder, 1);
-		GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)"Menue 1:");
-		menuSelect(count_encoder, 2);
-		GLCD_DisplayString(6,0,FONT_16x24,(unsigned char*)"Menue 2:");
-		menuSelect(count_encoder, 3);
-		GLCD_DisplayString(7,0,FONT_16x24,(unsigned char*)"Menue 3:");
-		menuSelect(count_encoder, 4);
-		GLCD_DisplayString(8,0,FONT_16x24,(unsigned char*)"Menue 4:");
-		menuSelect(count_encoder, 5);
-		GLCD_DisplayString(9,0,FONT_16x24,(unsigned char*)"Menue 5:");
-		
+		if(count_encoder != oldCount_encoder){
+			oldCount_encoder = count_encoder;
+			GLCD_SetBackColor(White);
+			GLCD_SetTextColor(Black);
+			GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)"counter: ");
+			GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)lcd_dez(count_encoder));
+			
+			menuSelect(count_encoder, 1);
+			GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)"Menue 1:");
+			menuSelect(count_encoder, 2);
+			GLCD_DisplayString(6,0,FONT_16x24,(unsigned char*)"Menue 2:");
+			menuSelect(count_encoder, 3);
+			GLCD_DisplayString(7,0,FONT_16x24,(unsigned char*)"Menue 3:");
+			menuSelect(count_encoder, 4);
+			GLCD_DisplayString(8,0,FONT_16x24,(unsigned char*)"Menue 4:");
+			menuSelect(count_encoder, 5);
+			GLCD_DisplayString(9,0,FONT_16x24,(unsigned char*)"Menue 5:");
+		}
 		
 	} // end while(1)
 }	// end main()
@@ -434,7 +437,7 @@ int main(void)
 		}
 		else if(editMode == 1){
 			GLCD_DisplayString(5,10,FONT_16x24,(unsigned char*)lcd_time(oldTicks/100));
-			GLCD_DisplayString(6,16-(editSelector*2.6),FONT_16x24,(unsigned char*)"^^");
+			GLCD_DisplayString(6,16-(editSelector*3),FONT_16x24,(unsigned char*)"^^");
 		}
 		
 		

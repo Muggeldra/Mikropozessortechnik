@@ -22,7 +22,7 @@ test5.c
 #include "keys.h"
 #include "prio.h"
 #include "lcd.h"
-#include "Time.h"
+#include "Timer.h"
 
 //================================================================================
 //Definition 
@@ -37,11 +37,12 @@ test5.c
 //================================================================================
 #if (T5_1==1)
 
-int baum = 10;
+
 
 int main(void)
 {	
 	//counter_Init(0,1,1);
+	uint32_t tcvalue = 10;
 	
 	GLCD_Init();
 	GLCD_Clear(White);
@@ -49,14 +50,16 @@ int main(void)
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.1 Counter");
-
 	
+	
+	counter_Init(0,1,1);
 
 	while(1)
 	{
 		//LCD will nicht D:
-		//LPC_TIM0->TC;
-		GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(baum));
+		tcvalue = LPC_TIM0->TC;
+		//GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(tcvalue));
+		
 	} // end while(1)
 }	// end main()
 

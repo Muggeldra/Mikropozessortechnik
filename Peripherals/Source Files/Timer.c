@@ -7,20 +7,20 @@ void counter_Init (uint8_t TimerNum, uint8_t CapIn, uint8_t edge){
 		case 0: 
 			TimerNum = 1;
 			LPC_SC->PCONP |= (1<<TimerNum);
-			LPC_TIM0->CTCR &=~(3<<2);
 			if(CapIn == 0){
 				CapIn = 20;
 			}
 			else{
 				CapIn = 22;
-				LPC_TIM0->CTCR |=(1<<2);
 			}
 			LPC_PINCON->PINSEL3 |= (3<<CapIn);
 			LPC_PINCON->PINMODE3 &=~ (3<<CapIn);
 			LPC_PINCON->PINMODE3 |= (2<<CapIn);
+			LPC_TIM0->CTCR &=~(3<<2);
+			if(CapIn == 22){LPC_TIM0->CTCR |=(1<<2);}
 			LPC_TIM0->CTCR |= (edge);
 			LPC_TIM0->TCR &=~ (1<<1);
-			LPC_TIM0->TCR &=~ (1<<1);
+			LPC_TIM0->TCR |= (1<<0);
 		break;
 		case 1: 
 			TimerNum = 2;
