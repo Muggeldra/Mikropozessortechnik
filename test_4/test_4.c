@@ -56,13 +56,13 @@ int main(void)
 	// test1 from script
 	ADC_Init((1<<3),0); //initialize channel 3 without interrupt -
 	ADC_StartCnv((1<<3), 0);
-	GPIOSetValue(2, 0, 1);
+	//GPIOSetValue(2, 0, 1);
 
 	while(1){
 		if(((ADC_Stat()>>3)&1)){//wait for end of conversion
 			GPIOSetValue(2, 0, 0);
 			result3 = ADC_GetValue(3);	//output result3 to the LCD
-			GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)lcd_dez(result3));
+			//GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)lcd_dez(result3));
 			ADC_StartCnv((1<<3), 0);
 			GPIOSetValue(2, 0, 1);
 		}
@@ -249,16 +249,17 @@ int main(void)
 	GLCD_DisplayString(5, 0, FONT_16x24,(unsigned char*)"Pot2 AD0.5");
 	GLCD_DisplayString(6, 0, FONT_16x24,(unsigned char*)"LM35 AD0.3");
 	
+	
+	// gpio pins for time measurements
+	GPIOSetDir(2, 0, 1);
+	GPIOSetDir(2, 1, 1);
+	
 	// test1 from script
 	ADC_Init((7<<3), 1);
 	ADC_StartCnv((7<<3), 1);
 	
-	// gpio pins for time measurements
-	GPIOSetDir(2, 4, 1);
-	GPIOSetDir(2, 5, 1);
-	
 	while(1){
-		GPIOToggle(2, 4);
+		GPIOToggle(2, 0);
 		GLCD_DisplayString(5, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[5]));
 		GLCD_DisplayString(4, 14, FONT_16x24, (unsigned char*)AD_volt(adresult[4]));
 		GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)TempConv(adresult[3]));
@@ -266,14 +267,15 @@ int main(void)
 } // end main()
 
 void ADC_IRQHandler(void){
-	GPIOSetValue(2, 5, 1);
 	int i;
+	GPIOSetValue(2, 1, 1);
 	for(i = 0; i < 8; i++){
 		if((ADC_Stat()>>i)&1){
 			adresult[i] = ADC_GetValue(i);
 		}
 	}
-	GPIOSetValue(2, 5, 0);
+	for(i=0;i<100;i++){}
+	GPIOSetValue(2, 1, 0);
 }
 
 #endif
@@ -306,7 +308,7 @@ int main(void)
 #define PERIOD 200
 
 static unsigned int ticks = 0;
-unsigned int lastStart, value;
+unsigned int lastStart = 0, value = 0;
 
 // systick handler
 void SysTick_Handler(void){
@@ -345,18 +347,17 @@ int main(void)
 	lastStart = ticks;
 	
 	while(1){
-		
 		if(ticks - lastStart <= (PERIOD / 2)){
-			value = 2 * (1023 / PERIOD) * (ticks - lastStart);
+			value = (2 * 1023 * (ticks - lastStart)) / PERIOD;
 		}
-		else if(ticks - lastStart <= PERIOD){
-			value = 2046 - (2 * (1023 / PERIOD) * (ticks - lastStart));
+		else if(ticks - lastStart <= (PERIOD - 1)){
+			value = 2046 - ((2 * (1023) * (ticks - lastStart)) / PERIOD);
 		}
 		else{
 			lastStart = ticks;
 		}
 		DAC_Out(value);
-		GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
+		//GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
 	} // end while(1)
 }	// end main()
 
@@ -439,14 +440,14 @@ int main(void)
 		else if(ticks - lastStart == 270){
 			value = 0;
 		}
-		else if(ticks - lastStart < 360){
+		else if(ticks - lastStart < 359){
 			value = 1023 - sin[360 - (ticks - lastStart)];
 		}
 		else{
 			lastStart = ticks;
 		}
 		DAC_Out(value);
-		GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
+		//GLCD_DisplayString(6, 11, FONT_16x24,(unsigned char*)lcd_dez(value));
 	} // end while(1)
 }	// end main()
 

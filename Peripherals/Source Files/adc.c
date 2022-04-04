@@ -20,7 +20,9 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	LPC_SC->PCONP |= (1 << 15);
 	
 	// set adc clock
-	LPC_SC->PCLKSEL0 &=~ (3 << 24);
+	LPC_SC->PCLKSEL0 &=~ (3 << 24); // CCLK/4 = 25MHz, default
+	//LPC_SC->PCLKSEL0 &=~ (3 << 24); // CCLK = 100MHz, Test 4.1.1
+	//LPC_SC->PCLKSEL0 |=  (1 << 24);
 	
 	// default values
 	LPC_ADC->ADCR &=~ (0xFF << 8);
@@ -28,18 +30,18 @@ void ADC_Init(uint8_t chsel, uint8_t intEn){
 	
 	// test 4.1.2
 	//LPC_ADC->ADCR |=  (23 << 8);
-	//LPC_ADC->ADCR |=  ( 9 << 8);
-	//LPC_ADC->ADCR |=  ( 4 << 8);
+	//LPC_ADC->ADCR |=  ( 8 << 8);
 	//LPC_ADC->ADCR |=  ( 3 << 8);
 	//LPC_ADC->ADCR |=  ( 2 << 8);
+	//LPC_ADC->ADCR |=  ( 1 << 8);
+	//LPC_ADC->ADCR |=  ( 0 << 8);
 	
-	//LPC_SC->PCLKSEL0 &=~ (3 << 24);
-	//LPC_SC->PCLKSEL0 |=  (1 << 24);
 	//LPC_ADC->ADCR    |=  (7 <<  8);
 	// end test 4.1.2
 	
 	// set burst mode
-	LPC_ADC->ADCR |= (intEn << 16);
+	//LPC_ADC->ADCR |= (intEn << 16);
+	
 	// set converter operational
 	LPC_ADC->ADCR |= (1 << 21);
 	// set no start
@@ -79,6 +81,10 @@ void ADC_StartCnv(uint8_t chsel, uint8_t burst){
 	if(!burst){
 		LPC_ADC->ADCR &=~ (7 << 24);
 		LPC_ADC->ADCR |=  (1 << 24);
+	}
+	else{
+		// set burst mode
+		LPC_ADC->ADCR |= (1 << 16);
 	}
 }
 

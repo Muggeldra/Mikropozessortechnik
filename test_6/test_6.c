@@ -43,7 +43,7 @@ void SysTick_Handler(void){
 		// seconds variable
 		if(!(ticks % 100)){
 			seconds++;
-			if(seconds >= 60){
+			if(seconds >= 70){
 				seconds = 0;
 			}
 			// generate output

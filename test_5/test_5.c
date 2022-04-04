@@ -42,7 +42,7 @@ test5.c
 int main(void)
 {	
 	//counter_Init(0,1,1);
-	uint32_t tcvalue = 10;
+	uint32_t tcvalue = 0;
 	
 	GLCD_Init();
 	GLCD_Clear(White);
@@ -58,7 +58,7 @@ int main(void)
 	{
 		//LCD will nicht D:
 		tcvalue = LPC_TIM0->TC;
-		//GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(tcvalue));
+		GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(tcvalue));
 		
 	} // end while(1)
 }	// end main()

@@ -63,23 +63,27 @@ int main(void)
 	SysTick_Config(SystemCoreClock/100);
 	SysTick_Handler();
 	
-	
+	GPIOSetDir(2, 0, 1);
 
 	while(1)
 	{
 		GLCD_Simulation();
 				
 		if(ticks > 100){
+			GPIOSetValue(2,0,1);
 			LED_On(0);
-			ticks = 0;
+			ticks = 1;
 		}
 		else if(ticks > 25){
+			GPIOSetValue(2,0,0);
 			LED_Off(0);
 		}
 		else if(ticks > 20){
+			GPIOSetValue(2,0,1);
 			LED_On(0);
 		}
 		else if(ticks > 5){
+			GPIOSetValue(2,0,0);
 			LED_Off(0);
 		}
 		
@@ -142,7 +146,6 @@ int main(void)
 //  Main-Funktion Versuchsteil T3_3
 //================================================================================
 #if (T3_3 == 1)
-
 	int counterUp = 0;
 	int counterDown = 0;
 	int counterLeft = 0;
@@ -196,19 +199,32 @@ int main(void)
 #if (T3_4 == 1)
 
 static unsigned int ticks = 0;
+int walkingLightDirection = 0;
+uint32_t walkingLightDelay = 10;
+uint32_t walkingLightTimer = 0;
+uint8_t walkingLight = 129;
+
 void SysTick_Handler(void){
+		GPIOSetValue(2,2,1);
 		ticks++;
+			//delay
+		if(ticks >= walkingLightDelay+walkingLightTimer){
+			walkingLightTimer = ticks;
+			rolchar(&walkingLight, walkingLightDirection);
+			LED_Out(walkingLight);
+			GPIOToggle(2,0);
+		}
+		GPIOSetValue(2,2,0);
 	}
 
 int main(void)
 {	
-	uint8_t walkingLight = 129;
+	
 	unsigned char previousSwitches = 0;
-	uint32_t walkingLightDelay = 10;
-	uint32_t walkingLightTimer = 0;
+	
 	uint32_t joystickDelay = 10;
 	uint32_t joystickTimer = 0;
-	int walkingLightDirection = 0;
+	
 	
 	Switch_Init();
 	button_Init();
@@ -230,6 +246,8 @@ int main(void)
 	GPIOSetValue(2,0,0);
 	GPIOSetDir(2,1,GPIO_OUTPUT);
 	GPIOSetValue(2,1,0);
+	GPIOSetDir(2,2,GPIO_OUTPUT);
+	GPIOSetValue(2,2,0);
 
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock/100);
@@ -245,13 +263,7 @@ int main(void)
 			walkingLight = Get_SwitchPos();
 		}
 		
-		//delay
-		if(ticks >= walkingLightDelay+walkingLightTimer){
-			walkingLightTimer = ticks;
-			rolchar(&walkingLight, walkingLightDirection);
-			LED_Out(walkingLight);
-			GPIOToggle(2,0);
-		}
+
 		
 		//Joystick
 		if(ticks >= joystickDelay+joystickTimer){
@@ -335,12 +347,12 @@ void menuSelect(int selector,int row){
 	if(selector == row){
 		GLCD_SetBackColor(Black);
 		GLCD_SetTextColor(White);
-		GLCD_DisplayString(4+count_encoder,10,FONT_16x24,(unsigned char*)"-");
+		//GLCD_DisplayString(4+count_encoder,10,FONT_16x24,(unsigned char*)"-");
 	}
 	else{
 		GLCD_SetBackColor(White);
 		GLCD_SetTextColor(Black);
-		GLCD_DisplayString(4+row,10,FONT_16x24,(unsigned char*)" ");
+		//GLCD_DisplayString(4+row,10,FONT_16x24,(unsigned char*)" ");
 	}
 }
 

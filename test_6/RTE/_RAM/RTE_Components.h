@@ -3,8 +3,8 @@
  * Auto generated Run-Time-Environment Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'test_3' 
- * Target:  'Simulation' 
+ * Project: 'test_6' 
+ * Target:  'RAM' 
  */
 
 #ifndef RTE_COMPONENTS_H
