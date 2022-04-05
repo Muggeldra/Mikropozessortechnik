@@ -451,10 +451,6 @@
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>DLGUARM</Key>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>JL2CM3</Key>
           <Name>-U268006109 -O14 -S2 -ZTIFSpeedSel5000 -A0 -C0 -JU1 -JI127.0.0.1 -JP0 -RST0 -N00("ARM CoreSight JTAG-DP") -D00(4BA00477) -L00(4) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -TB1 -TFE0 -FO0 -FD10000000 -FC800 -FN1 -FF0LPC_IAP_512.FLM -FS00 -FL080000 -FP0($$Device:LPC1769$Flash\LPC_IAP_512.FLM)</Name>
         </SetRegEntry>
@@ -592,6 +588,18 @@
       <bDave2>0</bDave2>
       <PathWithFileName>..\Peripherals\Source Files\GLCD_SPI_LPC1700.c</PathWithFileName>
       <FilenameWithoutPath>GLCD_SPI_LPC1700.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>7</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Peripherals\Source Files\keys.c</PathWithFileName>
+      <FilenameWithoutPath>keys.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

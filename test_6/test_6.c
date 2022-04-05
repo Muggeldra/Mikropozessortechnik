@@ -19,6 +19,7 @@ test_6.c
 #include "gpio.h"
 #include "lcd.h"
 #include "i2c.h"
+#include "keys.h"
 
 //================================================================================
 //Definition v. Konstanten:
@@ -179,7 +180,7 @@ int main(void)
 
 	while(1)
 	{
-		out7seg((seconds/10)%10, seconds%10, 5-((seconds/10)%10), 9-(seconds%10));
+		out7seg((seconds/10)%10, seconds%10|0x80, 5-((seconds/10)%10), 9-(seconds%10));
 	} // end while(1)
 }	// end main()
 
@@ -264,7 +265,7 @@ int main(void)
 			temp *= 625;
 			temp /= 100;
 			
-			out7seg((temp/1000)%10, (temp/100)%10, (temp/10)%10, temp%10);
+			out7seg((temp/1000)%10, (temp/100)%10|0x80, (temp/10)%10, temp%10);
 			
 			temp=0;
 		}
@@ -279,12 +280,52 @@ int main(void)
 //================================================================================
 #if (T6_4==1)
 
+unsigned char sbuf[3];
+int32_t ret;
+
 int main(void)
 {	
+	// LCD Init
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Maroon);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.2 switches");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7"); //TO-DO: Set correct group
+	
+	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"switches:");
+	GLCD_DisplayString(5, 1, FONT_16x24, (unsigned char*)"address:");
+	GLCD_DisplayString(6, 1, FONT_16x24, (unsigned char*)"read byte:");
+	
+	//i2c init
+	I2C1_Init();
+	
+	//switch init
+	Switch_Init();
+	button_Init();
+	
+	//eeprom address
+	sbuf[0] = 0x15;
+	sbuf[1] = 0x55;
 
 	while(1)
 	{
-		
+		if(Get_TA12Stat()){
+			//read switchpos
+			sbuf[2] = Get_SwitchPos();
+			//write to eeprom
+			I2C1Write(0x50, sbuf, 3);
+			
+			//read from eeprom
+			I2C1Write(0x50, sbuf, 2);
+			I2C1Read(0x50, &sbuf[3], 1);
+			
+			//display values
+			GLCD_DisplayString(4, 13, FONT_16x24, (unsigned char*)lcd_hex(Get_SwitchPos()));
+			GLCD_DisplayString(5, 13, FONT_16x24, (unsigned char*)lcd_hex((sbuf[0]<<8|sbuf[1])));
+			GLCD_DisplayString(6, 13, FONT_16x24, (unsigned char*)lcd_hex(sbuf[2]));
+		}
 	} // end while(1)
 }	// end main()
 
