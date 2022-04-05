@@ -319,7 +319,7 @@ int main(void)
 			
 			//read from eeprom
 			I2C1Write(0x50, sbuf, 2);
-			I2C1Read(0x50, &sbuf[3], 1);
+			I2C1Read(0x50, &sbuf[2], 1);
 			
 			//display values
 			GLCD_DisplayString(4, 13, FONT_16x24, (unsigned char*)lcd_hex(Get_SwitchPos()));
@@ -337,12 +337,47 @@ int main(void)
 //================================================================================
 #if (T6_5==1)
 
+unsigned char sbuf[4];
+int32_t lux;
+
 int main(void)
 {	
+	// LCD Init
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Maroon);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,2,FONT_16x24,(unsigned char*)"test2.2 switches");
+	GLCD_DisplayString(2,5,FONT_16x24,(unsigned char*)"Group A.7"); //TO-DO: Set correct group
+	
+	GLCD_DisplayString(4, 1, FONT_16x24, (unsigned char*)"lux:");
+	
+	//i2c init
+	I2C1_Init();
+	
+	//light sensor init
+	sbuf[0] = 0x00;
+	sbuf[1] = 0x80;
+	I2C1Write(0x44, sbuf, 2);
+	
+	//set sbuf
+	sbuf[0] = 0x04;
+	sbuf[1] = 0x05;
 
 	while(1)
 	{
+		//read from light sensor
+		I2C1Write(0x44, &sbuf[0], 1);
+		I2C1Read(0x44, &sbuf[2], 1);
+		I2C1Write(0x44, &sbuf[1], 1);
+		I2C1Read(0x44, &sbuf[3], 1);
 		
+		//calculate lux value
+		lux = 973*((sbuf[3]<<8)|sbuf[2])/(1<<16);
+		
+		//display values
+		GLCD_DisplayString(4, 13, FONT_16x24, (unsigned char*)lcd_dez(lux));
 	} // end while(1)
 }	// end main()
 
