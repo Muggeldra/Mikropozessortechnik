@@ -5,6 +5,7 @@
 #define prioJoystick 6
 #define prioEncoderCenter 7
 #define prioEncoderA 8
+#define prioTimer 9
 #define PRIO_ADC_IRQN 31
 
 #endif

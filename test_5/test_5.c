@@ -72,14 +72,40 @@ int main(void)
 //================================================================================
 //  test T52
 //================================================================================
-int main(void)
-{	
+uint32_t tcvalue=0; 
+uint32_t tcvalueBefore=0;
 
-	while(1)
-	{
+void TIMER0_IRQHandler(void){
+	tcvalue++;
+}
+
+int main (){ 
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Green);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.2 Timer");
+	
+	
+	Timer_Init (0,1000,1000,1,0); 
+	//timer0, counts: 0..999, divider=1, pclk=cclk, reset with MR0 
+	LPC_TIM0->TCR=(1<<0);//start timer 0 
+	
+	GPIOSetDir(2, 0, 1);
+	
+	while(1){
+		GLCD_Simulation();
+		tcvalue=LPC_TIM0->TC;
+		if(tcvalue != tcvalueBefore){
+			GPIOSetValue(2,1,1);
+			GPIOSetValue(2,1,0);
+			tcvalueBefore=tcvalue;
+		}
 		
-	} // end while(1)
-}	// end main()
+		GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(tcvalue));
+	} 
+}
 
 #endif
 
