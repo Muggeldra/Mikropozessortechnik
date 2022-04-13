@@ -81,6 +81,7 @@ void counter_Init (uint8_t TimerNum, uint8_t CapIn, uint8_t edge){
 }
 
 void Timer_Init (uint8_t TimerNum, uint32_t cycle, uint32_t TimerDivid, uint8_t pclk , uint8_t ResetMR){
+	SystemCoreClockUpdate();
 	switch(TimerNum){
 		case 0:
 		LPC_SC->PCONP |= (1<<1);
@@ -88,18 +89,19 @@ void Timer_Init (uint8_t TimerNum, uint32_t cycle, uint32_t TimerDivid, uint8_t 
 		LPC_TIM0->TCR |= (1<<1);
 		
 		LPC_SC->PCLKSEL0 |= (pclk<<2);
-		LPC_TIM0->PR=(SystemCoreClock/TimerDivid);
+		LPC_TIM0->PR = SystemCoreClock/TimerDivid-1;
 		LPC_TIM0->TCR = (1<<0);
 		
 		LPC_TIM0->MR0 = cycle -1;
 		
-		LPC_TIM0->MCR |= (1UL <<0);
-		LPC_TIM0->EMR = (3UL<<4);
+		LPC_TIM0->MCR |= (3 <<0);
+		//LPC_TIM0->EMR = (3UL<<4);
 		LPC_TIM0->IR |= (1<<0);
 		
 		NVIC_SetPriority(TIMER0_IRQn, prioTimer);
 		NVIC_ClearPendingIRQ(TIMER0_IRQn);
 		NVIC_EnableIRQ(TIMER0_IRQn);
+		
 		break;
 	}
 }
