@@ -45,10 +45,10 @@ description: control of compilation of test_n.c
 //********************************************************************************
 
 // test 3
-#define T3_1 0
+#define T3_1 1
 #define T3_2 0
 #define T3_3 0
-#define T3_4 1
+#define T3_4 0
 #define T3_5 0
 #define T3_6 0
 #define T3_7 0
@@ -67,9 +67,9 @@ description: control of compilation of test_n.c
 
 // test5
 #define T5_1 0
-#define T5_2 1
+#define T5_2 0
 #define T5_3 0
-#define T5_4 0
+#define T5_4 1
 #define T5_5 0
 #define T5_6 0
 #define T5_7 0
