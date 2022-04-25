@@ -9,8 +9,7 @@
 #define prioTimer1 10
 #define prioTimer2 11
 #define prioTimer3 12
-#define prioCap00 13
-#define prioCap01 14
+#define prioCaptureInterrupt 13
 #define PRIO_ADC_IRQN 31
 
 #endif

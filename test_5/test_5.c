@@ -46,7 +46,7 @@ int main(void)
 	
 	GLCD_Init();
 	GLCD_Clear(White);
-	GLCD_SetBackColor(Green);
+	GLCD_SetBackColor(Red);
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.1 Counter");
@@ -56,7 +56,6 @@ int main(void)
 
 	while(1)
 	{
-		//LCD will nicht D:
 		tcvalue = LPC_TIM0->TC;
 		GLCD_DisplayString(4,7,FONT_16x24,(unsigned char*)lcd_dez(tcvalue));
 		
@@ -88,7 +87,7 @@ void TIMER0_IRQHandler(void){
 int main (){ 
 	GLCD_Init();
 	GLCD_Clear(White);
-	GLCD_SetBackColor(Green);
+	GLCD_SetBackColor(Red);
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.2 Timer");
@@ -133,7 +132,7 @@ int main(void)
 {	
 	GLCD_Init();
 	GLCD_Clear(White);
-	GLCD_SetBackColor(Green);
+	GLCD_SetBackColor(Red);
 	GLCD_SetTextColor(Yellow);
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.3 PWM");
@@ -145,17 +144,16 @@ int main(void)
 	LPC_PINCON->PINMODE3 |= (2<<20);
 	LPC_TIM0->CCR |= (1<<0);
 	LPC_TIM0->CCR |= (1<<2);
-	NVIC_SetPriority(TIMER0_IRQn, prioCap00);
-	LPC_TIM0->IR |= (1<<4);
+
 	//capture Interrupt 0.1
 	LPC_PINCON->PINSEL3 |= (3<<22);
 	LPC_PINCON->PINMODE3 &=~ (3<<22);
 	LPC_PINCON->PINMODE3 |= (2<<22);
 	LPC_TIM0->CCR |= (1<<4);
 	LPC_TIM0->CCR |= (1<<5);
-	NVIC_SetPriority(TIMER0_IRQn, prioCap01);
-	LPC_TIM0->IR |= (1<<5);
 	
+	NVIC_SetPriority(TIMER0_IRQn, prioCaptureInterrupt);
+	LPC_TIM0->IR |= (1<<4);
 	NVIC_ClearPendingIRQ(TIMER0_IRQn);
 	NVIC_EnableIRQ(TIMER0_IRQn);
 	
@@ -168,6 +166,7 @@ int main(void)
 	} // end while(1)
 }	// end main()
 
+
 #endif
 
 //
@@ -176,8 +175,49 @@ int main(void)
 //================================================================================
 #if (T5_4==1)
 
+void TIMER2_IRQHandler(void){
+	
+	if(LPC_TIM2->IR & (1<<0)){
+		LPC_TIM2->IR |= (1<<0);
+	}
+}
+
+void TIMER3_IRQHandler(void){
+	
+	if(LPC_TIM3->IR & (1<<0)){
+		LPC_TIM3->IR |= (1<<0);
+	}
+	else if(LPC_TIM3->IR & (1<<1)){
+		LPC_TIM3->IR |= (1<<1);
+	}
+}
+
 int main(void)
 {	
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Red);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.4 RGB PWM");
+	
+	LPC_SC->PCONP |= (1<<15);
+	
+	Timer_Init (2,100,100000000,1,0); 
+	LPC_PINCON->PINSEL9 &=~ (3<<26);	//MAT 2.1
+	LPC_PINCON->PINSEL9 |= (2<<26);
+	LPC_GPIO4->FIODIR |= (1<<29);
+	LPC_TIM2->EMR |= (11<<6);
+	
+	Timer_Init (3,100,100000000,1,0);
+	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0
+	LPC_GPIO0->FIODIR |= (1<<10);
+	LPC_TIM3->EMR |= (11<<4);
+	
+	Timer_Init (3,100,100000000,1,1);
+	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1
+	LPC_GPIO0->FIODIR |= (1<<11);
+	LPC_TIM3->EMR |= (11<<6);
 
 	while(1)
 	{
