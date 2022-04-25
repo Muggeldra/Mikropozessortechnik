@@ -175,6 +175,9 @@ int main(void)
 //================================================================================
 #if (T5_4==1)
 
+uint32_t dutyCycleR = 20;
+uint32_t counterR = 0;
+
 void TIMER2_IRQHandler(void){
 	
 	if(LPC_TIM2->IR & (1<<0)){
@@ -185,11 +188,20 @@ void TIMER2_IRQHandler(void){
 void TIMER3_IRQHandler(void){
 	
 	if(LPC_TIM3->IR & (1<<0)){
-		LPC_TIM3->IR |= (1<<0);
+		counterR++;
+		if(counterR > dutyCycleR){
+			LPC_TIM3->IR |= (1<<0);
+		}
+		else if(counterR >= 100){
+			//LPC_TIM3->IR |= (1<<0);
+			counterR = 0;
+		}
+		
 	}
-	else if(LPC_TIM3->IR & (1<<1)){
+	/*
+	if(LPC_TIM3->IR & (1<<1)){
 		LPC_TIM3->IR |= (1<<1);
-	}
+	}*/
 }
 
 int main(void)
