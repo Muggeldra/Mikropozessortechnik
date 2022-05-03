@@ -156,7 +156,6 @@ int main(void)
 	LPC_TIM0->IR |= (1<<4);
 	NVIC_ClearPendingIRQ(TIMER0_IRQn);
 	NVIC_EnableIRQ(TIMER0_IRQn);
-	
 	GPIOSetDir(2,5,1);
 	
 
@@ -167,6 +166,7 @@ int main(void)
 }	// end main()
 
 
+
 #endif
 
 //
@@ -174,7 +174,7 @@ int main(void)
 //  test T54
 //================================================================================
 #if (T5_4==1)
-
+/*
 uint32_t dutyCycleR = 20;
 uint32_t counterR = 0;
 
@@ -201,7 +201,7 @@ void TIMER3_IRQHandler(void){
 	/*
 	if(LPC_TIM3->IR & (1<<1)){
 		LPC_TIM3->IR |= (1<<1);
-	}*/
+	}*//*
 }
 
 int main(void)
@@ -236,6 +236,47 @@ int main(void)
 		
 	} // end while(1)
 }	// end main()
+*/
+
+extern uint8_t var1;
+void Timer3_IRQHandler(void) {
+ if(LPC_TIM3->IR & (1UL<<2)) {
+ LPC_TIM3->IR = (1UL<<2); // %value% = 0:MR0, 1:MR1, 2:MR2, 3:MR3
+ //…
+ }
+}
+
+int main(void)
+{
+	//Setup Timer 3
+	LPC_SC->PCONP |= (1UL<<23);
+	LPC_PINCON->PINSEL0 |= (3UL<<22);
+	LPC_SC->PCLKSEL1 |= (1UL<<14);
+	SystemCoreClockUpdate();
+	LPC_TIM3->PR = SystemCoreClock/(1000000)-1;
+	LPC_TIM3->MR1 = 1000;
+	LPC_TIM3->MCR |= (1UL<<4);
+	LPC_TIM3->EMR &= ~(1UL<<1);
+	LPC_TIM3->EMR |= (3UL<<6);
+	NVIC_SetPriority(TIMER3_IRQn, 12);
+	NVIC_ClearPendingIRQ(TIMER3_IRQn);
+	NVIC_EnableIRQ(TIMER3_IRQn);
+	LPC_TIM3->IR = 0x0F;
+	LPC_TIM3->CTCR &= ~(3UL<<0);
+	LPC_TIM3->TCR = (1UL<<1);
+	LPC_TIM3->TCR = (1UL<<0);
+	
+	LPC_TIM3->MR0 = 100;	//PWM
+	LPC_TIM3->MCR |= (1UL<<3);
+	
+	
+	
+	while(1)
+	{
+		
+	}
+}
+
 
 #endif
 //
