@@ -216,6 +216,8 @@ int main(void)
 	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0
 	LPC_GPIO0->FIODIR |= (1<<10);
 	LPC_TIM3->EMR |= (11<<4);
+	LPC_TIM3->MR1 = 200;
+	LPC_TIM3->MCR |= (1UL<<3);
 	/*
 	Timer_Init (3,100,100000000,1,1);
 	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1
