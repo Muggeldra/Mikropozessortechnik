@@ -187,15 +187,11 @@ void TIMER2_IRQHandler(void){
 
 void TIMER3_IRQHandler(void){
 	
-	if(LPC_TIM3->IR & (1<<0)){
-			LPC_TIM3->EMR &= ~(1UL<<0);
-			LPC_TIM3->IR |= (1<<0);
-			
-	}
 	
-	if(LPC_TIM3->IR & (1<<1)){
-		LPC_TIM3->EMR &= ~(1UL<<1);
-		LPC_TIM3->IR |= (1<<1);
+	if(LPC_TIM3->IR & (1<<2)){
+		LPC_TIM3->EMR |= (1UL<<1);
+		LPC_TIM3->EMR |= (1UL<<0);
+		LPC_TIM3->IR |= (1<<2);
 	}
 }
 
@@ -208,7 +204,7 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.4 RGB PWM");
 	
-	GPIOSetDir(0, 10, 1);
+	//GPIOSetDir(0, 10, 1);
 	LPC_SC->PCONP |= (1<<15);
 	/*
 	Timer_Init (2,1000,1000000,1,0); 
@@ -220,14 +216,14 @@ int main(void)
 	
 	Timer_Init (3,1000,100000000,1,2);
 	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0
-	LPC_TIM3->EMR |= (3UL<<4);
-	LPC_TIM3->MR0 = 300;
+	LPC_TIM3->EMR |= (1UL<<4);
+	LPC_TIM3->MR0 = 200;
 	LPC_TIM3->MCR |= (1UL <<0);
 	LPC_TIM3->IR |= (1<<0);
 	
 	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1
-	LPC_TIM3->EMR |= (3UL<<6);
-	LPC_TIM3->MR1 = 200;
+	LPC_TIM3->EMR |= (1UL<<6);
+	LPC_TIM3->MR1 = 400;
 	LPC_TIM3->MCR |= (1UL <<3);
 	LPC_TIM3->IR |= (1<<1);
 	

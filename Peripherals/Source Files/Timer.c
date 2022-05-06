@@ -233,7 +233,7 @@ void Timer_Init (uint8_t TimerNum, uint32_t cycle, uint32_t TimerDivid, uint8_t 
 			break;
 			case 2: 
 				LPC_TIM3->MR2 = cycle -1;
-				LPC_TIM3->MCR |= (3 <<0);
+				LPC_TIM3->MCR |= (3 <<6);
 				LPC_TIM3->EMR = (3UL<<8);
 				LPC_TIM3->IR |= (1<<2);
 			break;
