@@ -180,12 +180,13 @@ uint32_t dutyCycleG = 100;
 uint32_t dutyCycleB = 100;
 
 int count_encoder = 3;
-int oldCount_encoder = 0;
 
 void TIMER2_IRQHandler(void){
 	
 	if(LPC_TIM2->IR & (1<<0)){
-		LPC_TIM2->EMR |= (1UL<<1);
+		if(dutyCycleG > 50){
+			LPC_TIM2->EMR |= (1UL<<1);
+		}
 		LPC_TIM2->IR |= (1<<0);
 	}
 }
@@ -194,8 +195,12 @@ void TIMER3_IRQHandler(void){
 	
 	
 	if(LPC_TIM3->IR & (1<<2)){
-		LPC_TIM3->EMR |= (1UL<<1);
-		LPC_TIM3->EMR |= (1UL<<0);
+		if(dutyCycleR > 50){
+			LPC_TIM3->EMR |= (1UL<<1);
+		}
+		if(dutyCycleB > 50){
+			LPC_TIM3->EMR |= (1UL<<0);
+		}
 		LPC_TIM3->IR |= (1<<2);
 	}
 }
@@ -204,24 +209,24 @@ void EINT3_IRQHandler(void){
 	if(LPC_GPIOINT->IO0IntStatR & (1<<23)){
 		if(GPIOGetValue(0,24)){
 			if((Get_SwitchPos()>>7)&1 && dutyCycleR < 1000){
-				dutyCycleR += 10;	
+				dutyCycleR += 100;	
 			}
 			if((Get_SwitchPos()>>6)&1 && dutyCycleG < 1000){
-				dutyCycleG += 10;	
+				dutyCycleG += 100;	
 			}
 			if((Get_SwitchPos()>>5)&1 && dutyCycleB < 1000){
-				dutyCycleB += 10;	
+				dutyCycleB += 100;	
 			}
 		}
 		else if(!GPIOGetValue(0,24) && dutyCycleR > 0){
 			if((Get_SwitchPos()>>7)&1 && dutyCycleR > 0){
-				dutyCycleR -= 10;	
+				dutyCycleR -= 100;	
 			}
 			if((Get_SwitchPos()>>6)&1 && dutyCycleG > 0){
-				dutyCycleG -= 10;	
+				dutyCycleG -= 100;	
 			}
 			if((Get_SwitchPos()>>5)&1 && dutyCycleB > 0){
-				dutyCycleB -= 10;	
+				dutyCycleB -= 100;	
 			}
 		}
 		LPC_GPIOINT->IO0IntClr |= (1<<23);
@@ -249,21 +254,15 @@ int main(void)
 	LPC_PINCON->PINSEL9 |= (2UL<<26);		//MAT 2.1 Green
 	LPC_TIM2->EMR |= (1UL<<6);
 	LPC_TIM2->MR1 = dutyCycleG;
-	LPC_TIM2->MCR |= (1UL <<3);
-	LPC_TIM2->IR |= (1<<1);
 	
 	Timer_Init (3,1000,100000000,1,2);
 	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0 Blue
 	LPC_TIM3->EMR |= (1UL<<4);
 	LPC_TIM3->MR0 = dutyCycleB;
-	LPC_TIM3->MCR |= (1UL <<0);
-	LPC_TIM3->IR |= (1<<0);
 	
 	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1 Red
 	LPC_TIM3->EMR |= (1UL<<6);
 	LPC_TIM3->MR1 = dutyCycleR;
-	LPC_TIM3->MCR |= (1UL <<3);
-	LPC_TIM3->IR |= (1<<1);
 	
 	
 
@@ -288,8 +287,6 @@ int main(void)
 			GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)" ");
 		}
 		
-		
-		
 		GLCD_DisplayString(3,1,FONT_16x24,(unsigned char*)"R: ");
 		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"G: ");
 		GLCD_DisplayString(5,1,FONT_16x24,(unsigned char*)"B: ");
@@ -299,6 +296,7 @@ int main(void)
 		GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)"%");
 		GLCD_DisplayString(4,9,FONT_16x24,(unsigned char*)"%");
 		GLCD_DisplayString(5,9,FONT_16x24,(unsigned char*)"%");
+		
 	} // end while(1)
 }	// end main()
 

@@ -180,8 +180,8 @@ void Timer_Init (uint8_t TimerNum, uint32_t cycle, uint32_t TimerDivid, uint8_t 
 			case 0: 
 				LPC_TIM2->MR0 = cycle -1;
 				LPC_TIM2->MCR |= (3 <<0);
-				LPC_TIM2->EMR = (3UL<<4);
-				LPC_TIM2->IR |= (1<<0);
+				//LPC_TIM2->EMR = (3UL<<4);
+				//LPC_TIM2->IR |= (1<<0);
 			break;
 			case 1: 
 				LPC_TIM2->MR1 = cycle -1;
@@ -234,8 +234,8 @@ void Timer_Init (uint8_t TimerNum, uint32_t cycle, uint32_t TimerDivid, uint8_t 
 			case 2: 
 				LPC_TIM3->MR2 = cycle -1;
 				LPC_TIM3->MCR |= (3 <<6);
-				LPC_TIM3->EMR = (3UL<<8);
-				LPC_TIM3->IR |= (1<<2);
+				//LPC_TIM3->EMR = (3UL<<8);
+				//LPC_TIM3->IR |= (1<<2);
 			break;
 			case 3: 
 				LPC_TIM3->MR3 = cycle -1;
