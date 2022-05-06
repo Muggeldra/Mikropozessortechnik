@@ -176,12 +176,17 @@ int main(void)
 #if (T5_4==1)
 
 uint32_t dutyCycleR = 100;
+uint32_t dutyCycleG = 100;
+uint32_t dutyCycleB = 100;
+
+int count_encoder = 3;
+int oldCount_encoder = 0;
 
 void TIMER2_IRQHandler(void){
 	
-	if(LPC_TIM2->IR & (1<<1)){
-		LPC_TIM2->EMR &= ~(1UL<<1);
-		LPC_TIM2->IR |= (1<<1);
+	if(LPC_TIM2->IR & (1<<0)){
+		LPC_TIM2->EMR |= (1UL<<1);
+		LPC_TIM2->IR |= (1<<0);
 	}
 }
 
@@ -195,6 +200,38 @@ void TIMER3_IRQHandler(void){
 	}
 }
 
+void EINT3_IRQHandler(void){
+	if(LPC_GPIOINT->IO0IntStatR & (1<<23)){
+		if(GPIOGetValue(0,24)){
+			if((Get_SwitchPos()>>7)&1 && dutyCycleR < 1000){
+				dutyCycleR += 10;	
+			}
+			if((Get_SwitchPos()>>6)&1 && dutyCycleG < 1000){
+				dutyCycleG += 10;	
+			}
+			if((Get_SwitchPos()>>5)&1 && dutyCycleB < 1000){
+				dutyCycleB += 10;	
+			}
+		}
+		else if(!GPIOGetValue(0,24) && dutyCycleR > 0){
+			if((Get_SwitchPos()>>7)&1 && dutyCycleR > 0){
+				dutyCycleR -= 10;	
+			}
+			if((Get_SwitchPos()>>6)&1 && dutyCycleG > 0){
+				dutyCycleG -= 10;	
+			}
+			if((Get_SwitchPos()>>5)&1 && dutyCycleB > 0){
+				dutyCycleB -= 10;	
+			}
+		}
+		LPC_GPIOINT->IO0IntClr |= (1<<23);
+	}
+	LPC_TIM3->MR1 = dutyCycleR;
+	LPC_TIM2->MR1 = dutyCycleG;
+	LPC_TIM3->MR0 = dutyCycleB;
+	
+}
+
 int main(void)
 {	
 	GLCD_Init();
@@ -204,26 +241,27 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.4 RGB PWM");
 	
-	//GPIOSetDir(0, 10, 1);
 	LPC_SC->PCONP |= (1<<15);
-	/*
-	Timer_Init (2,1000,1000000,1,0); 
-	LPC_PINCON->PINSEL9 |= (2UL<<26);		//MAT 2.1
-	LPC_TIM2->EMR |= (3UL<<6);
-	LPC_TIM2->MR1 = 400;
+	Encoder_Init();
+	Switch_Init();
+	
+	Timer_Init (2,1000,100000000,1,0); 
+	LPC_PINCON->PINSEL9 |= (2UL<<26);		//MAT 2.1 Green
+	LPC_TIM2->EMR |= (1UL<<6);
+	LPC_TIM2->MR1 = dutyCycleG;
 	LPC_TIM2->MCR |= (1UL <<3);
-	LPC_TIM2->IR |= (1<<1);*/
+	LPC_TIM2->IR |= (1<<1);
 	
 	Timer_Init (3,1000,100000000,1,2);
-	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0
+	LPC_PINCON->PINSEL0 |= (3<<20);		//MAT 3.0 Blue
 	LPC_TIM3->EMR |= (1UL<<4);
-	LPC_TIM3->MR0 = 200;
+	LPC_TIM3->MR0 = dutyCycleB;
 	LPC_TIM3->MCR |= (1UL <<0);
 	LPC_TIM3->IR |= (1<<0);
 	
-	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1
+	LPC_PINCON->PINSEL0 |= (3<<22);		//MAT 3.1 Red
 	LPC_TIM3->EMR |= (1UL<<6);
-	LPC_TIM3->MR1 = 400;
+	LPC_TIM3->MR1 = dutyCycleR;
 	LPC_TIM3->MCR |= (1UL <<3);
 	LPC_TIM3->IR |= (1<<1);
 	
@@ -231,7 +269,36 @@ int main(void)
 
 	while(1)
 	{
+		if((Get_SwitchPos()>>7)&1){
+			GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)"-");
+		}
+		else{
+			GLCD_DisplayString(3,0,FONT_16x24,(unsigned char*)" ");
+		}
+		if((Get_SwitchPos()>>6)&1){
+			GLCD_DisplayString(4,0,FONT_16x24,(unsigned char*)"-");
+		}
+		else{
+			GLCD_DisplayString(4,0,FONT_16x24,(unsigned char*)" ");
+		}
+		if((Get_SwitchPos()>>5)&1){
+			GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)"-");
+		}
+		else{
+			GLCD_DisplayString(5,0,FONT_16x24,(unsigned char*)" ");
+		}
 		
+		
+		
+		GLCD_DisplayString(3,1,FONT_16x24,(unsigned char*)"R: ");
+		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"G: ");
+		GLCD_DisplayString(5,1,FONT_16x24,(unsigned char*)"B: ");
+		GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleR/10));
+		GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleG/10));
+		GLCD_DisplayString(5,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleB/10));
+		GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)"%");
+		GLCD_DisplayString(4,9,FONT_16x24,(unsigned char*)"%");
+		GLCD_DisplayString(5,9,FONT_16x24,(unsigned char*)"%");
 	} // end while(1)
 }	// end main()
 
