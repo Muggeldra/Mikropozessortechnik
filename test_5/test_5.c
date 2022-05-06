@@ -308,9 +308,38 @@ int main(void)
 //================================================================================
 #if (T5_5==1)
 
+const int MinFreq = 125000;
+uint32_t wavePeriod = MinFreq;
+int direction = 0;
+
+void TIMER0_IRQHandler(void){
+	
+	if(LPC_TIM0->IR & (1<<0)){
+		LPC_TIM0->IR |= (1<<0);
+		wavePeriod += (50*direction);
+		LPC_TIM0->MR0 = wavePeriod;
+		if(wavePeriod >= MinFreq){
+			direction = -1;
+		}
+		else if(wavePeriod < MinFreq/2){
+			direction = 1;
+		}
+	}
+}
+
 int main(void)
 {	
+	GLCD_Init();
+	GLCD_Clear(White);
+	GLCD_SetBackColor(Red);
+	GLCD_SetTextColor(Yellow);
+	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
+	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.5 Speaker");
 
+	Timer_Init (0,wavePeriod,100000000,1,0);
+	LPC_PINCON->PINSEL3 |= (3UL<<24);
+	LPC_TIM0->EMR |= (3UL<<4);
+	
 	while(1)
 	{
 		
