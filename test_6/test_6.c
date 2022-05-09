@@ -257,11 +257,15 @@ int main(void)
 		if(!ret){
 			ret=I2C1Read(0x48,sbuf,2);
 			if(!ret){
-				temp = sbuf[0]|sbuf[1];
+				temp = (sbuf[0]<<8)|sbuf[1];
+				if((temp>>4)&1){
+					temp |= (0x8 << 4);
+				}
 				sbuf[0]=0;
 			}
 		}
-		if(!temp){
+		if(temp){
+			
 			temp *= 625;
 			temp /= 100;
 			
