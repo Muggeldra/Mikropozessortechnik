@@ -115,14 +115,19 @@ int main (){
 #endif
 
 #if (T5_3==1)
+uint32_t = timeLow;
+uint32_t = timeHigh;
+
 void TIMER0_IRQHandler(void){
 	if(LPC_TIM0->IR & (1<<4)){
+		timeLow = LPC_TIMX->TC;
 		//CAP 0.0
 		LPC_TIM0->IR |= (1<<4);
 		LPC_GPIO2->FIOPIN ^= (1<<10); 
 	}
 	else if(LPC_TIM0->IR & (1<<5)){
 		//CAP 0.1
+		timeHigh = LPC_TIMX->TC;
 		LPC_TIM0->IR |= (1<<5);
 		LPC_GPIO2->FIOPIN ^= (1<<10); 
 	}
@@ -161,7 +166,11 @@ int main(void)
 
 	while(1)
 	{
-		
+		GLCD_DisplayString(3,1,FONT_16x24,(unsigned char*)"H: ");
+		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"L: ");
+		GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez(timeHigh/10));
+		GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez(timeLow/10));
+		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"(time in us)");
 	} // end while(1)
 }	// end main()
 
