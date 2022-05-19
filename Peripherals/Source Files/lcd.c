@@ -73,7 +73,7 @@ char *lcd_dez (uint16_t value){
 	//GPIOSetValue(2, 1, 0);
 	return (text_string);
 }
-
+/*
 char *lcd_time (uint32_t value){
 		static char text_string[8];
     struct tm  ts;
@@ -86,7 +86,7 @@ char *lcd_time (uint32_t value){
 	
 	return (text_string);
 }
-
+*/
 char *AD_volt(unsigned short val){
 	static char text_string[6];
 	unsigned char asc[] = "0123456789.V";

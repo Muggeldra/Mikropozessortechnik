@@ -10,7 +10,7 @@
       <TargetName>Simulation</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -389,19 +389,14 @@
               <FilePath>.\test_5.c</FilePath>
             </File>
             <File>
-              <FileName>Timer.c</FileName>
+              <FileName>GLCD_Simulation.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\Timer.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\GLCD_Simulation.c</FilePath>
             </File>
             <File>
-              <FileName>GLCD_SPI_LPC1700.c</FileName>
+              <FileName>lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\GLCD_SPI_LPC1700.c</FilePath>
-            </File>
-            <File>
-              <FileName>keys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\keys.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
@@ -409,9 +404,24 @@
               <FilePath>..\Peripherals\Source Files\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>lcd.c</FileName>
+              <FileName>keys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\keys.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLCD_SPI_LPC1700.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\GLCD_SPI_LPC1700.c</FilePath>
+            </File>
+            <File>
+              <FileName>Timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\Timer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -806,19 +816,14 @@
               <FilePath>.\test_5.c</FilePath>
             </File>
             <File>
-              <FileName>Timer.c</FileName>
+              <FileName>GLCD_Simulation.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\Timer.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\GLCD_Simulation.c</FilePath>
             </File>
             <File>
-              <FileName>GLCD_SPI_LPC1700.c</FileName>
+              <FileName>lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\GLCD_SPI_LPC1700.c</FilePath>
-            </File>
-            <File>
-              <FileName>keys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\keys.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
@@ -826,9 +831,24 @@
               <FilePath>..\Peripherals\Source Files\gpio.c</FilePath>
             </File>
             <File>
-              <FileName>lcd.c</FileName>
+              <FileName>keys.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Peripherals\Source Files\lcd.c</FilePath>
+              <FilePath>..\Peripherals\Source Files\keys.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>GLCD_SPI_LPC1700.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\GLCD_SPI_LPC1700.c</FilePath>
+            </File>
+            <File>
+              <FileName>Timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Peripherals\Source Files\Timer.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -115,19 +115,26 @@ int main (){
 #endif
 
 #if (T5_3==1)
-uint32_t = timeLow;
-uint32_t = timeHigh;
+uint32_t timeLow = 0;
+uint32_t timeHigh = 0;
+uint32_t ganzeTimer = 0;
 
 void TIMER0_IRQHandler(void){
+	if(LPC_TIM0 -> IR & (1<<0)){
+		LPC_TIM0->IR |= (1<<0);
+		ganzeTimer++;
+	}
 	if(LPC_TIM0->IR & (1<<4)){
-		timeLow = LPC_TIMX->TC;
+		timeLow = (ganzeTimer * 100) + LPC_TIM0->CR0 - LPC_TIM0->CR1;
 		//CAP 0.0
+		ganzeTimer = 0;
 		LPC_TIM0->IR |= (1<<4);
 		LPC_GPIO2->FIOPIN ^= (1<<10); 
 	}
 	else if(LPC_TIM0->IR & (1<<5)){
+		timeHigh = (ganzeTimer * 100) + LPC_TIM0 -> CR1 - LPC_TIM0->CR0;
 		//CAP 0.1
-		timeHigh = LPC_TIMX->TC;
+		ganzeTimer = 0;
 		LPC_TIM0->IR |= (1<<5);
 		LPC_GPIO2->FIOPIN ^= (1<<10); 
 	}
@@ -142,7 +149,7 @@ int main(void)
 	GLCD_DisplayString(0,3,FONT_16x24,(unsigned char*)"Lab microproc.");
 	GLCD_DisplayString(1,1,FONT_16x24,(unsigned char*)"test5.3 PWM");
 	
-	Timer_Init (0,100,100000000,1,0); 
+	Timer_Init (0,100,10000000,1,0);
 	//capture Interrupt 0.0
 	LPC_PINCON->PINSEL3 |= (3<<20);
 	LPC_PINCON->PINMODE3 &=~ (3<<20);
@@ -168,9 +175,9 @@ int main(void)
 	{
 		GLCD_DisplayString(3,1,FONT_16x24,(unsigned char*)"H: ");
 		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"L: ");
-		GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez(timeHigh/10));
-		GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez(timeLow/10));
-		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"(time in us)");
+		if(timeHigh > 0){GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez(timeHigh/10));}
+		if(timeLow > 0){GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez(timeLow/10));}
+		GLCD_DisplayString(5,1,FONT_16x24,(unsigned char*)"(time in us)");
 	} // end while(1)
 }	// end main()
 
@@ -184,16 +191,16 @@ int main(void)
 //================================================================================
 #if (T5_4==1)
 
-uint32_t dutyCycleR = 100;
+uint32_t dutyCycleR = 230;
 uint32_t dutyCycleG = 100;
-uint32_t dutyCycleB = 100;
+uint32_t dutyCycleB = 240;
 
 int count_encoder = 3;
 
 void TIMER2_IRQHandler(void){
 	
 	if(LPC_TIM2->IR & (1<<0)){
-		if(dutyCycleG > 50){
+		if(dutyCycleG > 100){
 			LPC_TIM2->EMR |= (1UL<<1);
 		}
 		LPC_TIM2->IR |= (1<<0);
@@ -204,10 +211,10 @@ void TIMER3_IRQHandler(void){
 	
 	
 	if(LPC_TIM3->IR & (1<<2)){
-		if(dutyCycleR > 50){
+		if(dutyCycleR > 230){
 			LPC_TIM3->EMR |= (1UL<<1);
 		}
-		if(dutyCycleB > 50){
+		if(dutyCycleB > 240){
 			LPC_TIM3->EMR |= (1UL<<0);
 		}
 		LPC_TIM3->IR |= (1<<2);
@@ -216,26 +223,26 @@ void TIMER3_IRQHandler(void){
 
 void EINT3_IRQHandler(void){
 	if(LPC_GPIOINT->IO0IntStatR & (1<<23)){
-		if(GPIOGetValue(0,24)){
-			if((Get_SwitchPos()>>7)&1 && dutyCycleR < 1000){
-				dutyCycleR += 100;	
+		if(!GPIOGetValue(0,24)){
+			if((Get_SwitchPos()>>7)&1 && dutyCycleR < 1230){
+				dutyCycleR += 10;	
 			}
-			if((Get_SwitchPos()>>6)&1 && dutyCycleG < 1000){
-				dutyCycleG += 100;	
+			if((Get_SwitchPos()>>6)&1 && dutyCycleG < 1100){
+				dutyCycleG += 10;	
 			}
-			if((Get_SwitchPos()>>5)&1 && dutyCycleB < 1000){
-				dutyCycleB += 100;	
+			if((Get_SwitchPos()>>5)&1 && dutyCycleB < 1240){
+				dutyCycleB += 10;	
 			}
 		}
-		else if(!GPIOGetValue(0,24) && dutyCycleR > 0){
-			if((Get_SwitchPos()>>7)&1 && dutyCycleR > 0){
-				dutyCycleR -= 100;	
+		else if(GPIOGetValue(0,24)){
+			if((Get_SwitchPos()>>7)&1 && dutyCycleR > 230){
+				dutyCycleR -= 10;	
 			}
-			if((Get_SwitchPos()>>6)&1 && dutyCycleG > 0){
-				dutyCycleG -= 100;	
+			if((Get_SwitchPos()>>6)&1 && dutyCycleG > 100){
+				dutyCycleG -= 10;	
 			}
-			if((Get_SwitchPos()>>5)&1 && dutyCycleB > 0){
-				dutyCycleB -= 100;	
+			if((Get_SwitchPos()>>5)&1 && dutyCycleB > 240){
+				dutyCycleB -= 10;	
 			}
 		}
 		LPC_GPIOINT->IO0IntClr |= (1<<23);
@@ -299,9 +306,9 @@ int main(void)
 		GLCD_DisplayString(3,1,FONT_16x24,(unsigned char*)"R: ");
 		GLCD_DisplayString(4,1,FONT_16x24,(unsigned char*)"G: ");
 		GLCD_DisplayString(5,1,FONT_16x24,(unsigned char*)"B: ");
-		GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleR/10));
-		GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleG/10));
-		GLCD_DisplayString(5,4,FONT_16x24,(unsigned char*)lcd_dez(dutyCycleB/10));
+		GLCD_DisplayString(3,4,FONT_16x24,(unsigned char*)lcd_dez((dutyCycleR/10)-23));
+		GLCD_DisplayString(4,4,FONT_16x24,(unsigned char*)lcd_dez((dutyCycleG/10)-10));
+		GLCD_DisplayString(5,4,FONT_16x24,(unsigned char*)lcd_dez((dutyCycleB/10)-24));
 		GLCD_DisplayString(3,9,FONT_16x24,(unsigned char*)"%");
 		GLCD_DisplayString(4,9,FONT_16x24,(unsigned char*)"%");
 		GLCD_DisplayString(5,9,FONT_16x24,(unsigned char*)"%");
