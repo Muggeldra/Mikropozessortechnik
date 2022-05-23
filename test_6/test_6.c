@@ -257,9 +257,9 @@ int main(void)
 		if(!ret){
 			ret=I2C1Read(0x48,sbuf,2);
 			if(!ret){
-				temp = (sbuf[0]<<8)|sbuf[1];
-				if((temp>>12)&1){
-					temp |= (0x8 << 4);
+				temp = (((sbuf[0]<<8)|sbuf[1])>>4); // 10101010 1111----  ----xxxx xxxxxxxx
+				if((temp>>11)&1){
+					temp |= (0x8 << 12);
 				}
 				sbuf[0]=0;
 			}
